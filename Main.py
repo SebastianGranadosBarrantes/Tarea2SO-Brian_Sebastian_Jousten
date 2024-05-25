@@ -23,20 +23,18 @@ def openProcessView(machine):
 
     colum_heading = ("idProcess", "awaitingTime", "finishTime", "executionTime", "priority")
     colum_text = ("Id Process", "Awaiting Time", "Finish Time", "Execution Time", "Priority")
+    global table_process
     table_process = tb.Table(colum_heading, colum_text, processView)
 
     Label(processView, text='Actual process').pack()
     processName_entry = Entry(processView)
     processName_entry.pack()
 
-    Label(processView, text='Define a new process').pack()
+    Label(processView, text='Define a new process').pack(pady = 10)
 
 
     frame_fields_process = Frame(processView)
     frame_fields_process.pack()
-
-    frame_button_create_process = Frame(processView)
-    frame_button_create_process.pack()
 
     fields = ["Id Process", "Awaiting Time", "Finish Time", "Execution Time", "Priority"]
     entry_fields = []
@@ -46,18 +44,48 @@ def openProcessView(machine):
         entry = Entry(frame_fields_process)
         entry.pack(side=tk.LEFT)
         entry_fields.append(entry)
-    Button(frame_button_create_process, text='Create process', command=lambda: add_process(entry_fields)).pack()
+    Button(processView, text='Create process', command=lambda: add_process(entry_fields)).pack(pady = 10)
+
+    frame_algorithms = Frame(processView)
+    frame_algorithms.pack()
+
+    algorithm_options = ["FIFO", "SJF", "", ""]
+
+    for option in algorithm_options:
+        Button(frame_algorithms, text=option, command=lambda: set_algorithm(option)).pack(padx = 10, side=tk.LEFT)
+
     processView.mainloop()
+
+
+def set_algorithm(option):
+    algorithm = option
+    print(f'El algoritmo se seteo a {algorithm}')
 
 def add_process(entry_fields):
     values = [entry.get() for entry in entry_fields]
-    print(f'Estos son los valores que estan en los fields: {values}')
+    for value in values:
+        if value == '':
+            print('Error, alguno de los campos necesarios esta vacio')
+            return
+    for process in process_list:
+        if process.idProcess == values[0]:
+            print('Error, el proceso con ese id ya existe, cambielo y vuelva a intentar')
+            return
+
+    process = Process(values[0], values[1], values[2], values[3], values[4])
+    process_list.append(process)
+    table_process.insert(values)
+    print(f'Esta es la lista de procesos actual{process_list}')
 
 parametersView = Tk()
 parametersView.title('Define general parameters')
 parametersView.geometry("1000x500")
 
+global process_list
+process_list = []
 
+global algorithm
+algorithm = ''
 Label(parametersView, text='Enter the principal memory size(MB):').pack()
 principalMemorySize_entry = Entry(parametersView)
 principalMemorySize_entry.pack()
