@@ -3,10 +3,6 @@ import tkinter as tk
 from Classes.Process import Process
 import Classes.Machine_Parameters as mp
 import Classes.Table as tb
-
-
-
-
 def set_parameters():
     principalMemorySize = int(principalMemorySize_entry.get())
     secondaryMemorySize = int(secondaryMemorySize_entry.get())
@@ -49,17 +45,17 @@ def openProcessView(machine):
     frame_algorithms = Frame(processView)
     frame_algorithms.pack()
 
-    algorithm_options = ["FIFO", "SJF", "", ""]
+    algorithm_options = ["FIFO", "SJF", "tercero", "cuarto"]
 
     for option in algorithm_options:
-        Button(frame_algorithms, text=option, command=lambda: set_algorithm(option)).pack(padx = 10, side=tk.LEFT)
+        Button(frame_algorithms, text=option, command=lambda opt=option : set_algorithm(opt)).pack(padx = 10, side=tk.LEFT)
 
     processView.mainloop()
 
 
 def set_algorithm(option):
     algorithm = option
-    print(f'El algoritmo se seteo a {algorithm}')
+    print(f'El algoritmo se seteo a {option}')
 
 def add_process(entry_fields):
     values = [entry.get() for entry in entry_fields]
