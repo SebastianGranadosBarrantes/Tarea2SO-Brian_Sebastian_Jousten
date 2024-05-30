@@ -231,7 +231,7 @@ class Ui_MainWindow(object):
         self.lblActualProcess.setText(_translate("MainWindow", "Actual process:"))
         self.label_8.setText(_translate("MainWindow", "Process:"))
         item = self.tbwProcess.horizontalHeaderItem(0)
-        item.setText(_translate("MainWindow", "Id process"))
+        item.setText(_translate("MainWindow", "Process Id"))
         item = self.tbwProcess.horizontalHeaderItem(1)
         item.setText(_translate("MainWindow", "Name"))
         item = self.tbwProcess.horizontalHeaderItem(2)

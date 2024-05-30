@@ -1,10 +1,7 @@
-from PyQt6.uic import loadUi
 from Classes.Process import Process
 import Classes.Machine_Parameters as mp
-
-
 import random
-from PyQt6.QtWidgets import QApplication, QMainWindow, QMessageBox
+from PyQt6.QtWidgets import QApplication, QMainWindow, QMessageBox, QTableWidgetItem
 from mainInterface import Ui_MainWindow
 
 
@@ -32,7 +29,16 @@ class MainWindow(QMainWindow):
             QMessageBox.critical(self, 'Error', 'A process cant be created with a size zero')
         else:
             new_process_id = self.find_avaliable_id()
+            self.process_id.append(new_process_id)
             new_process_priority = self.get_random_priority()
+            new_process_execution_time = self.get_random_execution_time()
+            new_process = Process(new_process_id, process_name, process_size, new_process_execution_time, new_process_priority)
+            self.process_list.append(new_process)
+            print('proceso creado con exito')
+            self.update_process_table()
+
+
+
 
     def define_machine(self):
         principal_memory_size = self.ui.tfPrincipalMemorySize.text()
@@ -51,6 +57,25 @@ class MainWindow(QMainWindow):
             self.machine_parameters.pages_per_primary_memory = self.machine_parameters.calculate_pages_per_pmemory()
             self.machine_parameters.pages_per_secondary_memory = self.machine_parameters.calculate_pages_per_smemory()
 
+    def update_process_table(self): # insert process in the table
+        process = self.process_list[-1]
+        print(process)
+        actual_row = self.ui.tbwProcess.rowCount()
+        self.ui.tbwProcess.insertRow(actual_row)
+        print(actual_row)
+        print(self.ui.tbwProcess.columnCount())
+
+        self.ui.tbwProcess.setItem(actual_row, 0, QTableWidgetItem(str(process.idProcess)))
+        self.ui.tbwProcess.setItem(actual_row, 1, QTableWidgetItem(process.processName))
+        self.ui.tbwProcess.setItem(actual_row, 2, QTableWidgetItem(str(process.processSize)))
+        self.ui.tbwProcess.setItem(actual_row, 3, QTableWidgetItem(str(process.pageNumber)))
+        self.ui.tbwProcess.setItem(actual_row, 4, QTableWidgetItem(process.state))
+        self.ui.tbwProcess.setItem(actual_row, 5, QTableWidgetItem(str(process.pages_per_principal)))
+        self.ui.tbwProcess.setItem(actual_row, 6, QTableWidgetItem(str(process.pages_per_secondary)))
+
+        print(f'El tamanno de la lista es ${len(self.process_list)}')
+
+
 
     def handle_launch(self):
         if self.machine_parameters.primary_memory == 0 or self.machine_parameters.secondary_memory == 0:
@@ -60,7 +85,8 @@ class MainWindow(QMainWindow):
     def get_random_priority(self):
         return random.randint(1, 20)
 
-
+    def get_random_execution_time(self):
+        return random.randint(30, 120)
 
     def find_avaliable_id(self):
         find = False
@@ -77,41 +103,11 @@ class MainWindow(QMainWindow):
         return counter
 
 
-
-
-    def add_process(self):
-        print('Esto es una prueba')
-        # values = [entry.get() for entry in entry_fields]
-        # for value in values:
-        #     if value == '':
-        #         print('Error, alguno de los campos necesarios esta vacio')
-        #         return
-        # for process in process_list:
-        #     if process.idProcess == values[0]:
-        #         print('Error, el proceso con ese id ya existe, cambielo y vuelva a intentar')
-        #         return
-        #
-        # process = Process(values[0], values[1], values[2], values[3], values[4])
-        # process_list.append(process)
-        # print(f'Esta es la lista de procesos actual{process_list}')
-
-
 if __name__ == "__main__":
     app = QApplication([])
     window = MainWindow()
     window.show()
     app.exec()
-
-
-
-# def set_parameters():
-#     principalMemorySize = int(principalMemorySize_entry.get())
-#     secondaryMemorySize = int(secondaryMemorySize_entry.get())
-#     machine = mp.MachineParameters(principalMemorySize, secondaryMemorySize)
-#     print(machine)
-#     parametersView.destroy()
-#     openProcessView(machine)
-
 
 def set_algorithm(option):
     algorithm = option

@@ -13,6 +13,9 @@ class Process(threading.Thread):
         self.quantum = 0
         self.stopped = threading.Event()
         self.pageNumber = 0
+        self.state = 'Await'
+        self.pages_per_principal = 0
+        self.pages_per_secondary = 0
         self.processSize = int(processSize)
 
     def run(self):
@@ -21,8 +24,21 @@ class Process(threading.Thread):
                 print(f'process {self.idProcess} executed in background, rest execution time: {self.finishTime }')
                 self.finishTime = self.finishTime - 1
                 self.quantum = self.quantum - 1
+
     def __str__(self):
-        return f"Process {self.idProcess} - Awaiting Time: {self.awaitingTime} - Finish Time: {self.finishTime} - Execution Time: {self.executionTime} - Priority: {self.priority}"
+        return (f"Process(idProcess={self.idProcess}, "
+                f"awaitingTime={self.awaitingTime}, "
+                f"processName={self.processName}, "
+                f"finishTime={self.finishTime}, "
+                f"executionTime={self.executionTime}, "
+                f"priority={self.priority}, "
+                f"quantum={self.quantum}, "
+                f"pageNumber={self.pageNumber}, "
+                f"state={self.state}, "
+                f"pages_per_principal={self.pages_per_principal}, "
+                f"pager_per_secondary={self.pages_per_secondary}, "
+                f"processSize={self.processSize})")
+
 
     def setQuantum(self, quantum):
         self.quantum = quantum
