@@ -1,28 +1,22 @@
+import math
+
 class MachineParameters:
-    def __init__(self, virtualMemory, primaryMemory, secondaryMemory) :
-        self.virtualMemory = virtualMemory
-        self.primaryMemory = primaryMemory
-        self.secondaryMemory = secondaryMemory
+    def __init__(self, primary_memory, secondary_memory, pages_size):
+        self.primary_memory = primary_memory
+        self.secondary_memory = secondary_memory
+        self.pages_size = pages_size
+        self.pages_per_primary_memory = self.calculate_pages_per_pmemory()
+        self.pages_per_secondary_memory = self.calculate_pages_per_smemory()
 
-    def __str__(self):
-        return f"Virtual Memory: {self.virtualMemory} - Primary Memory: {self.primaryMemory} - Secondary Memory: {self.secondaryMemory}"
-    
-    def setVirtualMemory(self, virtualMemory):
-        self.virtualMemory = virtualMemory
 
-    def setPrimaryMemory(self, primaryMemory):
-        self.primaryMemory = primaryMemory
-    
-    def setSecondaryMemory(self, secondaryMemory):
-        self.secondaryMemory = secondaryMemory
-    
-    def getVirtualMemory(self):
-        return self.virtualMemory
-    
-    def getPrimaryMemory(self):
-        return self.primaryMemory
-    
-    def getSecondaryMemory(self):
-        return self.secondaryMemory
-    
-    
+    def calculate_pages_per_pmemory(self):
+        if self.primary_memory != 0:
+            return math.ceil(self.primary_memory / self.pages_size)
+        else:
+            return 0
+
+    def calculate_pages_per_smemory(self):
+        if self.secondary_memory != 0:
+            return math.ceil(self.secondary_memory / self.pages_size)
+        else:
+            return 0
