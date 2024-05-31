@@ -13,7 +13,7 @@ class Process(threading.Thread):
         self.quantum = 0
         self.stopped = threading.Event()
         self.pageNumber = 0
-        self.state = 'Await'
+        self.state = 'Await'  # states are await, ready and execution
         self.pages_per_principal = 0
         self.pages_per_secondary = 0
         self.processSize = int(processSize)

@@ -1,5 +1,7 @@
+import math
+
 from Classes.Process import Process
-import Classes.Machine_Parameters as mp
+from Classes.Machine_Parameters import MachineParameters
 import random
 from PyQt6.QtWidgets import QApplication, QMainWindow, QMessageBox, QTableWidgetItem
 from mainInterface import Ui_MainWindow
@@ -12,7 +14,7 @@ class MainWindow(QMainWindow):
         self.ui.setupUi(self)
         self.algorithm = ''
         self.process_list = []
-        self.machine_parameters = mp.MachineParameters(0,0,0)
+        self.machine_parameters = None
         self.ui.btnCreateProccess.clicked.connect(self.handler_create_proces)
         self.ui.btnSetParameters.clicked.connect(self.define_machine)
         self.ui.btnLauch.clicked.connect(self.handle_launch)
@@ -37,7 +39,10 @@ class MainWindow(QMainWindow):
             print('proceso creado con exito')
             self.update_process_table()
 
-
+    def verify_pow2(self, number):
+        if number <= 0:
+            return False
+        return (number & (number - 1)) == 0
 
 
     def define_machine(self):
@@ -50,12 +55,20 @@ class MainWindow(QMainWindow):
             QMessageBox.critical(self, 'Error', 'Is necessary to define a secondary memory size')
         elif pages_size == '' or pages_size == '0':
             QMessageBox.critical(self, 'Error', 'Is necessary to define a page size')
+        elif not self.verify_pow2(int(principal_memory_size)):
+            QMessageBox.critical(self, 'Error', 'The principal memory size most be a power of 2 ')
+        elif not self.verify_pow2(int(secondary_memory_size)):
+            QMessageBox.critical(self, 'Error', 'The secondary memory size most be a power of 2 ')
+        elif not self.verify_pow2(int(pages_size)):
+            QMessageBox.critical(self, 'Error', 'The principal pages size most be a power of 2 ')
         else:
-            self.machine_parameters.primary_memory = int(principal_memory_size)
-            self.machine_parameters.secondary_memory = int(secondary_memory_size)
-            self.machine_parameters.pages_size = int(pages_size)
-            self.machine_parameters.pages_per_primary_memory = self.machine_parameters.calculate_pages_per_pmemory()
-            self.machine_parameters.pages_per_secondary_memory = self.machine_parameters.calculate_pages_per_smemory()
+            try:
+                self.machine_parameters = MachineParameters(int(principal_memory_size), int(secondary_memory_size), int(pages_size))
+                self.init_prMemory_table()
+                self.init_seMemory_table()
+
+            except ValueError:
+                print('error while mananing the class machine_parameters')
 
     def update_process_table(self): # insert process in the table
         process = self.process_list[-1]
@@ -76,9 +89,69 @@ class MainWindow(QMainWindow):
         print(f'El tamanno de la lista es ${len(self.process_list)}')
 
 
+    def init_prMemory_table(self):
+        actual_row = self.ui.tbwPrimaryMemory.rowCount()
+        memory_list = self.machine_parameters.get_principal_memory_pages()
+        print(memory_list)
+        for page in memory_list:
+            self.ui.tbwPrimaryMemory.insertRow(actual_row)
+            self.ui.tbwPrimaryMemory.setItem(actual_row, 0, QTableWidgetItem(str(f'{page.initial_position} - {page.final_position}')))
+            self.ui.tbwPrimaryMemory.setItem(actual_row, 1, QTableWidgetItem(str(page.page_number)))
+            self.ui.tbwPrimaryMemory.setItem(actual_row, 2, QTableWidgetItem(str(page.execution_page_number)))
+            self.ui.tbwPrimaryMemory.setItem(actual_row, 3, QTableWidgetItem(str(page.process_id)))
+            self.ui.tbwPrimaryMemory.setItem(actual_row, 4, QTableWidgetItem(str(page.process_name)))
+            actual_row = self.ui.tbwPrimaryMemory.rowCount()
+
+    def init_seMemory_table(self):
+        actual_row = self.ui.tbwSecondaryMemory.rowCount()
+        memory_list = self.machine_parameters.get_secondary_memory_pages()
+        print(memory_list)
+        storage_number = 1
+        for page in memory_list:
+            self.ui.tbwSecondaryMemory.insertRow(actual_row)
+            self.ui.tbwSecondaryMemory.setItem(actual_row, 0, QTableWidgetItem(str(f'{page.initial_position} - {page.final_position}')))
+            self.ui.tbwSecondaryMemory.setItem(actual_row, 1, QTableWidgetItem(str(storage_number)))
+            self.ui.tbwSecondaryMemory.setItem(actual_row, 2, QTableWidgetItem(str(page.process_id)))
+            self.ui.tbwSecondaryMemory.setItem(actual_row, 3, QTableWidgetItem(str(page.process_name)))
+            self.ui.tbwSecondaryMemory.setItem(actual_row, 4, QTableWidgetItem(str(page.page_number)))
+            actual_row = self.ui.tbwSecondaryMemory.rowCount()
+            storage_number += 1
+
+    def find_row_pgN_seMemo(self, page_number):
+        for row in range(self.ui.tbwSecondaryMemory.rowCount()):
+            item = self.ui.tbwSecondaryMemory.item(row, 4)
+            if item and item.text() == str(page_number):
+                return row
+        return -1
+
+    def alter_seMemory_table(self, page_number):
+        row = self.find_row_pgN_seMemo(page_number)
+        page = self.machine_parameters.get_secondary_memory_pages()[row]
+        self.ui.tbwSecondaryMemory.setItem(row, 0, QTableWidgetItem(str(f'{page.initial_position} - {page.final_position}')))
+        self.ui.tbwSecondaryMemory.setItem(row, 1, QTableWidgetItem(str(page.page_number + 1)))
+        self.ui.tbwSecondaryMemory.setItem(row, 2, QTableWidgetItem(str(page.process_id)))
+        self.ui.tbwSecondaryMemory.setItem(row, 3, QTableWidgetItem(str(page.process_name)))
+        self.ui.tbwSecondaryMemory.setItem(row, 4, QTableWidgetItem(str(page.page_number)))
+
+    def find_row_pgN_prMemo(self, page_number):
+        for row in range(self.ui.tbwPrimaryMemory.rowCount()):
+            item = self.ui.tbwPrimaryMemory.item(row, 4)
+            if item and item.text() == str(page_number):
+                return row
+        return -1
+
+    def alter_prMemory_table(self, page_number):
+        row = self.find_row_pgN_prMemo(page_number)
+        page = self.machine_parameters.get_principal_memory_pages()[row]
+        self.ui.tbwPrimaryMemory.setItem(row, 0, QTableWidgetItem(str(f'{page.initial_position} - {page.final_position}')))
+        self.ui.tbwPrimaryMemory.setItem(row, 1, QTableWidgetItem(str(page.page_number)))
+        self.ui.tbwPrimaryMemory.setItem(row, 2, QTableWidgetItem(str(page.execution_page_number)))
+        self.ui.tbwPrimaryMemory.setItem(row, 3, QTableWidgetItem(str(page.process_id)))
+        self.ui.tbwPrimaryMemory.setItem(row, 4, QTableWidgetItem(str(page.process_name)))
+
 
     def handle_launch(self):
-        if self.machine_parameters.primary_memory == 0 or self.machine_parameters.secondary_memory == 0:
+        if not self.machine_parameters or self.machine_parameters.secondary_memory_size == 0:
             QMessageBox.critical(self, 'Error', 'Before launching the program is necessary to set the machine parameters')
         else:
             print('Code executed')
