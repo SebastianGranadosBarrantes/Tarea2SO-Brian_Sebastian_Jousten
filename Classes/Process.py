@@ -12,11 +12,10 @@ class Process(threading.Thread):
         self.priority = int(priority)
         self.quantum = 0
         self.stopped = threading.Event()
-        self.pageNumber = 0
+        self.pageNumber = 0 # this can be a list of the pages that the process have
         self.state = 'Await'  # states are await, ready and execution
-        self.pages_per_principal = 0
-        self.pages_per_secondary = 0
         self.processSize = int(processSize)
+        self.pages_table = []
 
     def run(self):
         while self.finishTime > self.executionTime:
@@ -35,8 +34,6 @@ class Process(threading.Thread):
                 f"quantum={self.quantum}, "
                 f"pageNumber={self.pageNumber}, "
                 f"state={self.state}, "
-                f"pages_per_principal={self.pages_per_principal}, "
-                f"pager_per_secondary={self.pages_per_secondary}, "
                 f"processSize={self.processSize})")
 
 

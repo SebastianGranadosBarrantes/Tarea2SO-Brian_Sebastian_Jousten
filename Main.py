@@ -29,15 +29,24 @@ class MainWindow(QMainWindow):
             QMessageBox.critical(self, 'Error', 'A process cant be created without a name')
         elif process_size == '0':
             QMessageBox.critical(self, 'Error', 'A process cant be created with a size zero')
+        elif self.machine_parameters == None:
+            QMessageBox.critical(self, 'Error','The machine parameters most be initialize')
         else:
             new_process_id = self.find_avaliable_id()
-            self.process_id.append(new_process_id)
             new_process_priority = self.get_random_priority()
             new_process_execution_time = self.get_random_execution_time()
             new_process = Process(new_process_id, process_name, process_size, new_process_execution_time, new_process_priority)
+            if self.machine_parameters.assign_memory_to_process(new_process):
+                print('process created successfully')
+            else:
+                QMessageBox.critical(self, 'Error', 'could not reserve memory space for the process, the process cannot be created')
+                return
+            self.process_id.append(new_process_id)
             self.process_list.append(new_process)
-            print('proceso creado con exito')
             self.update_process_table()
+            self.init_prMemory_table()
+            self.init_seMemory_table()
+
 
     def verify_pow2(self, number):
         if number <= 0:
@@ -68,14 +77,12 @@ class MainWindow(QMainWindow):
                 self.init_seMemory_table()
 
             except ValueError:
-                print('error while mananing the class machine_parameters')
+                print('error while managing the class machine_parameters')
 
     def update_process_table(self): # insert process in the table
         process = self.process_list[-1]
-        print(process)
         actual_row = self.ui.tbwProcess.rowCount()
         self.ui.tbwProcess.insertRow(actual_row)
-        print(actual_row)
         print(self.ui.tbwProcess.columnCount())
 
         self.ui.tbwProcess.setItem(actual_row, 0, QTableWidgetItem(str(process.idProcess)))
@@ -83,16 +90,17 @@ class MainWindow(QMainWindow):
         self.ui.tbwProcess.setItem(actual_row, 2, QTableWidgetItem(str(process.processSize)))
         self.ui.tbwProcess.setItem(actual_row, 3, QTableWidgetItem(str(process.pageNumber)))
         self.ui.tbwProcess.setItem(actual_row, 4, QTableWidgetItem(process.state))
-        self.ui.tbwProcess.setItem(actual_row, 5, QTableWidgetItem(str(process.pages_per_principal)))
-        self.ui.tbwProcess.setItem(actual_row, 6, QTableWidgetItem(str(process.pages_per_secondary)))
+        #self.ui.tbwProcess.setItem(actual_row, 5, QTableWidgetItem(str(process.pages_per_principal)))
+        #self.ui.tbwProcess.setItem(actual_row, 6, QTableWidgetItem(str(process.pages_per_secondary)))
 
         print(f'El tamanno de la lista es ${len(self.process_list)}')
 
 
     def init_prMemory_table(self):
+        self.ui.tbwPrimaryMemory.clearContents()
+        self.ui.tbwPrimaryMemory.setRowCount(0)
         actual_row = self.ui.tbwPrimaryMemory.rowCount()
         memory_list = self.machine_parameters.get_principal_memory_pages()
-        print(memory_list)
         for page in memory_list:
             self.ui.tbwPrimaryMemory.insertRow(actual_row)
             self.ui.tbwPrimaryMemory.setItem(actual_row, 0, QTableWidgetItem(str(f'{page.initial_position} - {page.final_position}')))
@@ -103,9 +111,10 @@ class MainWindow(QMainWindow):
             actual_row = self.ui.tbwPrimaryMemory.rowCount()
 
     def init_seMemory_table(self):
+        self.ui.tbwSecondaryMemory.clearContents()
+        self.ui.tbwSecondaryMemory.setRowCount(0)
         actual_row = self.ui.tbwSecondaryMemory.rowCount()
         memory_list = self.machine_parameters.get_secondary_memory_pages()
-        print(memory_list)
         storage_number = 1
         for page in memory_list:
             self.ui.tbwSecondaryMemory.insertRow(actual_row)
