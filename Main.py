@@ -5,9 +5,11 @@ from Classes.Machine_Parameters import MachineParameters
 import random
 from PyQt6.QtWidgets import QApplication, QMainWindow, QMessageBox, QTableWidgetItem
 from mainInterface import Ui_MainWindow
+from Classes.Scheduler import Scheduler
 
 
-class MainWindow(QMainWindow):
+
+class MainWindow(QMainWindow):##Inicio de clase
     def __init__(self):
         super().__init__()
         self.ui = Ui_MainWindow()
@@ -19,6 +21,21 @@ class MainWindow(QMainWindow):
         self.ui.btnSetParameters.clicked.connect(self.define_machine)
         self.ui.btnLauch.clicked.connect(self.handle_launch)
         self.process_id = []
+        self.schedul = Scheduler()
+
+    #actualizar tabla luego de hacer ordenamiento
+    def updateTblPrcs(self):
+        try:
+            self.ui.tbwProcess.setRowCount(len(self.process_list))
+            for i in range(len(self.process_list)):
+                self.ui.tbwProcess.setItem(i, 0, QTableWidgetItem(str(self.process_list[i].idProcess)))
+                self.ui.tbwProcess.setItem(i, 1, QTableWidgetItem(self.process_list[i].processName))
+                self.ui.tbwProcess.setItem(i, 2, QTableWidgetItem(str(self.process_list[i].processSize)))
+                self.ui.tbwProcess.setItem(i, 3, QTableWidgetItem(str(self.process_list[i].pageNumber)))
+                self.ui.tbwProcess.setItem(i, 4, QTableWidgetItem(self.process_list[i].state))
+        except Exception as e:
+            print(e)
+
 
     def handler_create_proces(self):
         process_size = self.ui.tfProcessSize.text()
@@ -37,9 +54,10 @@ class MainWindow(QMainWindow):
             new_process_execution_time = self.get_random_execution_time()
             new_process = Process(new_process_id, process_name, process_size, new_process_execution_time, new_process_priority)
             if self.machine_parameters.assign_memory_to_process(new_process):
+                QMessageBox.about(self, 'Success', 'process created successfully')
                 print('process created successfully')
             else:
-                QMessageBox.critical(self, 'Error', 'could not reserve memory space for the process, the process cannot be created')
+                QMessageBox.critical(self, 'Error', 'Could not reserve memory space for the process, the process cannot be created')
                 return
             self.process_id.append(new_process_id)
             self.process_list.append(new_process)
@@ -109,6 +127,9 @@ class MainWindow(QMainWindow):
             self.ui.tbwPrimaryMemory.setItem(actual_row, 3, QTableWidgetItem(str(page.process_id)))
             self.ui.tbwPrimaryMemory.setItem(actual_row, 4, QTableWidgetItem(str(page.process_name)))
             actual_row = self.ui.tbwPrimaryMemory.rowCount()
+            self.ui.tfProcessName.clear()
+            self.ui.tfProcessSize.clear()
+            self.ui.tfProcessName.setFocus()
 
     def init_seMemory_table(self):
         self.ui.tbwSecondaryMemory.clearContents()
@@ -163,7 +184,23 @@ class MainWindow(QMainWindow):
         if not self.machine_parameters or self.machine_parameters.secondary_memory_size == 0:
             QMessageBox.critical(self, 'Error', 'Before launching the program is necessary to set the machine parameters')
         else:
-            print('Code executed')
+            try:
+                self.algorithm = self.ui.cmbSelectAlgorithm.currentText()
+                if self.algorithm == 'SJF':
+                    #ordena por nombre usando scheduler, para obtener un cambio controlado
+                    self.schedul.sort_process_list_sjf(self.process_list)
+                    
+                elif self.algorithm == 'HRRN':
+                    print("HRRN aun no implementado")
+                    #scheduler.sort_process_list_hrrn(self.process_list)
+                else:
+                    print("TTF aun no implementado")
+                    #scheduler.sort_process_list_ft(self.process_list)
+
+                self.updateTblPrcs()
+            except Exception as e:
+                print(e)
+
     def get_random_priority(self):
         return random.randint(1, 20)
 
@@ -184,6 +221,11 @@ class MainWindow(QMainWindow):
                 counter += 1
         return counter
 
+##Fin de clase
+
+### MAIN ###
+### MAIN ###
+### MAIN ###
 
 if __name__ == "__main__":
     app = QApplication([])

@@ -280,7 +280,7 @@ class Ui_MainWindow(object):
         self.label_13.setText(_translate("MainWindow", "Define Algorithm"))
         self.cmbSelectAlgorithm.setItemText(0, _translate("MainWindow", "FIFO"))
         self.cmbSelectAlgorithm.setItemText(1, _translate("MainWindow", "SJF"))
-        self.cmbSelectAlgorithm.setItemText(2, _translate("MainWindow", "tercero"))
+        self.cmbSelectAlgorithm.setItemText(2, _translate("MainWindow", "HRRN"))
         self.cmbSelectAlgorithm.setItemText(3, _translate("MainWindow", "cuarto"))
         self.label_10.setText(_translate("MainWindow", "Create Service:"))
         self.label_14.setText(_translate("MainWindow", "Service Name"))
