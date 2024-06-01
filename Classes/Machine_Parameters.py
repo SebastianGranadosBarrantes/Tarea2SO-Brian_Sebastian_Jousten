@@ -29,6 +29,7 @@ class MachineParameters:
             for i in range(necessary_pages):
                 saved1 = self.primary_memory.add_process_to_memory(process.idProcess, process.processName)
                 if saved1:
+                    process.pages_table.append(saved1)
                     print(f'Process page number {i + 1} has been added to memory {saved1}')
                 else:
                     print(f'Error while adding process page number {i + 1}')
@@ -41,6 +42,7 @@ class MachineParameters:
                 if i < principal_memory_pages:
                     saved1 = self.primary_memory.add_process_to_memory(process.idProcess, process.processName)
                     if saved1:
+                        process.pages_table.append(saved1)
                         print(f'Process page number {i + 1} has been added to memory {saved1}')
                     else:
                         print(f'Error while adding process page number {i + 1}')
@@ -48,6 +50,7 @@ class MachineParameters:
                 else:
                     saved2 = self.secondary_memory.add_process_to_memory(process.idProcess, process.processName)
                     if saved2:
+                        process.pages_table.append(saved2)
                         print(f'Process page number {i + 1} has been added to memory {saved2}')
                     else:
                         print(f'Error while adding process page number {i + 1}')
@@ -57,6 +60,7 @@ class MachineParameters:
             for i in range(necessary_pages):
                 saved2 = self.secondary_memory.add_process_to_memory(process.idProcess, process.processName)
                 if saved2:
+                    process.pages_table.append(saved2)
                     print(f'Process page number {i + 1} has been added to memory {saved2}')
                 else:
                     print(f'Error while adding process page number {i + 1}')
@@ -64,10 +68,6 @@ class MachineParameters:
         else: # el proceso no puede ser creado porque en ninguno de los dos almacenamientos hay espacio sufieciente para contenerlo
             return False
         return True
-
-
-        print('both primary and secondary memory are filled, the process cant be created')
-        return False
 
     def calculate_pages_per_smemory(self):
         if self.secondary_memory_size != 0:
