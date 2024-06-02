@@ -1,5 +1,6 @@
 import threading
 import time
+from os import system
 
 class Process(threading.Thread):
     def __init__(self, idProcess, processName, processSize, finishTime, priority):
@@ -18,11 +19,13 @@ class Process(threading.Thread):
         self.pages_table = []
 
     def run(self):
-        while self.finishTime > self.executionTime:
-            if self.quantum != 0:
-                print(f'process {self.idProcess} executed in background, rest execution time: {self.finishTime }')
-                self.finishTime = self.finishTime - 1
-                self.quantum = self.quantum - 1
+        print(f'Process {self.idProcess} ({self.processName}) started with finish time {self.finishTime}')
+        while self.executionTime < self.finishTime:
+            time.sleep(1)
+            self.executionTime += 1
+            print(f'Process {self.idProcess} ({self.processName}) executing, time left: {self.finishTime - self.executionTime}')
+            print()
+        print(f'Process {self.idProcess} ({self.processName}) finished')
 
     def __str__(self):
         return (f"Process(idProcess={self.idProcess}, "

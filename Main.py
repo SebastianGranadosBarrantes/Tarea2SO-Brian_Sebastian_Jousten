@@ -1,13 +1,14 @@
-import math
+from sched import scheduler
 
 from Classes.Process import Process
 from Classes.Machine_Parameters import MachineParameters
 import random
 from PyQt6.QtWidgets import QApplication, QMainWindow, QMessageBox, QTableWidgetItem
+
+from Classes.Processor import Processor
+from Classes.Services import Service
 from mainInterface import Ui_MainWindow
 from Classes.Scheduler import Scheduler
-
-
 
 class MainWindow(QMainWindow):##Inicio de clase
     def __init__(self):
@@ -16,11 +17,15 @@ class MainWindow(QMainWindow):##Inicio de clase
         self.ui.setupUi(self)
         self.algorithm = ''
         self.process_list = []
+        self.service_list = []
         self.machine_parameters = None
+        self.processor = None
         self.ui.btnCreateProccess.clicked.connect(self.handler_create_proces)
         self.ui.btnSetParameters.clicked.connect(self.define_machine)
         self.ui.btnLauch.clicked.connect(self.handle_launch)
+        self.ui.btnCreateService.clicked.connect(self.handler_create_service)
         self.process_id = []
+        self.service_id = []
         self.schedul = Scheduler()
 
     #actualizar tabla luego de hacer ordenamiento
@@ -65,7 +70,31 @@ class MainWindow(QMainWindow):##Inicio de clase
             self.init_prMemory_table()
             self.init_seMemory_table()
 
-
+    def handler_create_service(self):
+        service_size = self.ui.tfProcessSize_2.text()
+        service_name = "SERVICE: " + self.ui.tfProcessName_2.text()
+        if service_size == '':
+            QMessageBox.critical(self, 'Error', 'A Service cant be created with out a size')
+        elif service_name == '':
+            QMessageBox.critical(self, 'Error', 'A Service cant be created without a name')
+        elif service_size == '0':
+            QMessageBox.critical(self, 'Error', 'A Service cant be created with a size zero')
+        elif self.machine_parameters == None:
+            QMessageBox.critical(self, 'Error','The machine parameters most be initialize')
+        else:
+            new_service_id = self.find_avaliable_id()
+            new_service = Service(new_service_id, service_name, service_size)
+            if self.machine_parameters.assign_memory_to_process(new_service):
+                QMessageBox.about(self, 'Success', 'Service created successfully')
+                print('Service created successfully')
+            else:
+                QMessageBox.critical(self, 'Error', 'Could not reserve memory space for the service, the service cannot be created')
+                return
+            self.service_id.append(new_service_id)
+            self.process_list.append(new_service)
+            self.update_process_table()
+            self.init_prMemory_table()
+            self.init_seMemory_table()
     def verify_pow2(self, number):
         if number <= 0:
             return False
@@ -185,6 +214,7 @@ class MainWindow(QMainWindow):##Inicio de clase
             QMessageBox.critical(self, 'Error', 'Before launching the program is necessary to set the machine parameters')
         else:
             try:
+                self.processor = Processor(4)
                 self.algorithm = self.ui.cmbSelectAlgorithm.currentText()
                 if self.algorithm == 'SJF':
                     #ordena por nombre usando scheduler, para obtener un cambio controlado
@@ -193,10 +223,16 @@ class MainWindow(QMainWindow):##Inicio de clase
                 elif self.algorithm == 'HRRN':
                     print("HRRN aun no implementado")
                     #scheduler.sort_process_list_hrrn(self.process_list)
+
+                elif self.algorithm == 'FIFO':
+                    print("Algoritmo FIFO")
+                    for process in self.process_list:
+                        self.processor.add_process(process)
+
                 else:
                     print("TTF aun no implementado")
                     #scheduler.sort_process_list_ft(self.process_list)
-
+                self.processor.handle_launch()
                 self.updateTblPrcs()
             except Exception as e:
                 print(e)
