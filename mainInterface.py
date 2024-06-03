@@ -13,10 +13,70 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(1001, 625)
+        MainWindow.setStyleSheet("\n"
+"QWidget {\n"
+"    background-color: #000000;\n"
+"}\n"
+"\n"
+"QLabel{\n"
+"    color:white;\n"
+"}\n"
+"\n"
+"QLineEdit{\n"
+"     background-color: rgb(255, 255, 255);\n"
+"}\n"
+"\n"
+"QComboBox{\n"
+"    background-color: rgb(255, 255, 255);\n"
+"}\n"
+"\n"
+"QPushButton {\n"
+"    background-color: #afff7e;  /* Color de fondo */\n"
+"    color: #0000;  /* Color del texto */\n"
+"    border: 2px solid #ffbc37;  /* Borde con grosor de 2px y color */\n"
+"    border-radius: 10px;  /* Esquinas redondeadas */\n"
+"    padding: 5px;  /* Espaciado interno */\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: #2980b9;  /* Color de fondo al pasar el mouse */\n"
+"}\n"
+"\n"
+"QPushButton:pressed {\n"
+"    background-color: #1abc9c;  /* Color de fondo al hacer clic */\n"
+"}\n"
+"\n"
+"QTableWidget {\n"
+"    background-color: #f0f0f0;  /* Color de fondo del QTableWidget */\n"
+"    gridline-color: #d3d3d3;  /* Color de las líneas de la cuadrícula */\n"
+"    border: 1px solid #d3d3d3;  /* Borde del QTableWidget */\n"
+"}\n"
+"\n"
+"QTableWidget::item {\n"
+"    background-color: #ffffff;  /* Color de fondo de los ítems (celdas) */\n"
+"    color: #000000;  /* Color del texto de los ítems */\n"
+"}\n"
+"\n"
+"QTableWidget::item:selected {\n"
+"    background-color: #3399ff;  /* Color de fondo de las celdas seleccionadas */\n"
+"    color: #ffffff;  /* Color del texto de las celdas seleccionadas */\n"
+"}\n"
+"\n"
+"QTableWidget QHeaderView::section {\n"
+"    background-color: #cccccc;  /* Color de fondo de los encabezados */\n"
+"    color: #000000;  /* Color del texto de los encabezados */\n"
+"    padding: 4px;\n"
+"    border: 1px solid #d3d3d3;  /* Borde de los encabezados */\n"
+"}\n"
+"\n"
+"QTableWidget::item:focus {\n"
+"    outline: none;  /* Eliminar el borde por defecto al enfocarse en una celda */\n"
+"}\n"
+"")
         self.centralwidget = QtWidgets.QWidget(parent=MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayoutWidget = QtWidgets.QWidget(parent=self.centralwidget)
-        self.verticalLayoutWidget.setGeometry(QtCore.QRect(30, 0, 251, 220))
+        self.verticalLayoutWidget.setGeometry(QtCore.QRect(30, 0, 251, 226))
         self.verticalLayoutWidget.setObjectName("verticalLayoutWidget")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.verticalLayoutWidget)
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
@@ -51,7 +111,7 @@ class Ui_MainWindow(object):
         self.btnSetParameters.setObjectName("btnSetParameters")
         self.verticalLayout.addWidget(self.btnSetParameters)
         self.verticalLayoutWidget_2 = QtWidgets.QWidget(parent=self.centralwidget)
-        self.verticalLayoutWidget_2.setGeometry(QtCore.QRect(300, 0, 251, 161))
+        self.verticalLayoutWidget_2.setGeometry(QtCore.QRect(300, 0, 251, 204))
         self.verticalLayoutWidget_2.setObjectName("verticalLayoutWidget_2")
         self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.verticalLayoutWidget_2)
         self.verticalLayout_3.setContentsMargins(0, 0, 0, 0)
@@ -72,11 +132,19 @@ class Ui_MainWindow(object):
         self.tfProcessSize = QtWidgets.QLineEdit(parent=self.verticalLayoutWidget_2)
         self.tfProcessSize.setObjectName("tfProcessSize")
         self.verticalLayout_3.addWidget(self.tfProcessSize)
+        self.label_10 = QtWidgets.QLabel(parent=self.verticalLayoutWidget_2)
+        self.label_10.setObjectName("label_10")
+        self.verticalLayout_3.addWidget(self.label_10)
+        self.cmbType = QtWidgets.QComboBox(parent=self.verticalLayoutWidget_2)
+        self.cmbType.setObjectName("cmbType")
+        self.cmbType.addItem("")
+        self.cmbType.addItem("")
+        self.verticalLayout_3.addWidget(self.cmbType)
         self.btnCreateProccess = QtWidgets.QPushButton(parent=self.verticalLayoutWidget_2)
         self.btnCreateProccess.setObjectName("btnCreateProccess")
         self.verticalLayout_3.addWidget(self.btnCreateProccess)
         self.horizontalLayoutWidget = QtWidgets.QWidget(parent=self.centralwidget)
-        self.horizontalLayoutWidget.setGeometry(QtCore.QRect(20, 230, 901, 161))
+        self.horizontalLayoutWidget.setGeometry(QtCore.QRect(20, 230, 791, 161))
         self.horizontalLayoutWidget.setObjectName("horizontalLayoutWidget")
         self.horizontalLayout = QtWidgets.QHBoxLayout(self.horizontalLayoutWidget)
         self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
@@ -172,7 +240,7 @@ class Ui_MainWindow(object):
         self.tbwSecondaryMemory.setHorizontalHeaderItem(4, item)
         self.verticalLayout_5.addWidget(self.tbwSecondaryMemory)
         self.verticalLayoutWidget_7 = QtWidgets.QWidget(parent=self.centralwidget)
-        self.verticalLayoutWidget_7.setGeometry(QtCore.QRect(830, 0, 160, 80))
+        self.verticalLayoutWidget_7.setGeometry(QtCore.QRect(570, 0, 160, 80))
         self.verticalLayoutWidget_7.setObjectName("verticalLayoutWidget_7")
         self.verticalLayout_6 = QtWidgets.QVBoxLayout(self.verticalLayoutWidget_7)
         self.verticalLayout_6.setContentsMargins(0, 0, 0, 0)
@@ -187,33 +255,8 @@ class Ui_MainWindow(object):
         self.cmbSelectAlgorithm.addItem("")
         self.cmbSelectAlgorithm.addItem("")
         self.verticalLayout_6.addWidget(self.cmbSelectAlgorithm)
-        self.verticalLayoutWidget_3 = QtWidgets.QWidget(parent=self.centralwidget)
-        self.verticalLayoutWidget_3.setGeometry(QtCore.QRect(570, 0, 251, 161))
-        self.verticalLayoutWidget_3.setObjectName("verticalLayoutWidget_3")
-        self.verticalLayout_7 = QtWidgets.QVBoxLayout(self.verticalLayoutWidget_3)
-        self.verticalLayout_7.setContentsMargins(0, 0, 0, 0)
-        self.verticalLayout_7.setObjectName("verticalLayout_7")
-        self.label_10 = QtWidgets.QLabel(parent=self.verticalLayoutWidget_3)
-        self.label_10.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
-        self.label_10.setObjectName("label_10")
-        self.verticalLayout_7.addWidget(self.label_10)
-        self.label_14 = QtWidgets.QLabel(parent=self.verticalLayoutWidget_3)
-        self.label_14.setObjectName("label_14")
-        self.verticalLayout_7.addWidget(self.label_14)
-        self.tfProcessName_2 = QtWidgets.QLineEdit(parent=self.verticalLayoutWidget_3)
-        self.tfProcessName_2.setObjectName("tfProcessName_2")
-        self.verticalLayout_7.addWidget(self.tfProcessName_2)
-        self.label_15 = QtWidgets.QLabel(parent=self.verticalLayoutWidget_3)
-        self.label_15.setObjectName("label_15")
-        self.verticalLayout_7.addWidget(self.label_15)
-        self.tfProcessSize_2 = QtWidgets.QLineEdit(parent=self.verticalLayoutWidget_3)
-        self.tfProcessSize_2.setObjectName("tfProcessSize_2")
-        self.verticalLayout_7.addWidget(self.tfProcessSize_2)
-        self.btnCreateService = QtWidgets.QPushButton(parent=self.verticalLayoutWidget_3)
-        self.btnCreateService.setObjectName("btnCreateService")
-        self.verticalLayout_7.addWidget(self.btnCreateService)
         self.btnLauch = QtWidgets.QPushButton(parent=self.centralwidget)
-        self.btnLauch.setGeometry(QtCore.QRect(830, 90, 151, 24))
+        self.btnLauch.setGeometry(QtCore.QRect(570, 90, 151, 24))
         self.btnLauch.setObjectName("btnLauch")
         MainWindow.setCentralWidget(self.centralwidget)
         self.statusbar = QtWidgets.QStatusBar(parent=MainWindow)
@@ -232,9 +275,12 @@ class Ui_MainWindow(object):
         self.label_3.setText(_translate("MainWindow", "Pages size"))
         self.label_16.setText(_translate("MainWindow", "Al values most be a power of 2 "))
         self.btnSetParameters.setText(_translate("MainWindow", "Set"))
-        self.label_5.setText(_translate("MainWindow", "Create Process:"))
-        self.label_6.setText(_translate("MainWindow", "Process Name"))
-        self.label_7.setText(_translate("MainWindow", "Process size:"))
+        self.label_5.setText(_translate("MainWindow", "Create Process/Sevice:"))
+        self.label_6.setText(_translate("MainWindow", "Process/Service Name"))
+        self.label_7.setText(_translate("MainWindow", "Process/Service size:"))
+        self.label_10.setText(_translate("MainWindow", "Type"))
+        self.cmbType.setItemText(0, _translate("MainWindow", "Process"))
+        self.cmbType.setItemText(1, _translate("MainWindow", "Service"))
         self.btnCreateProccess.setText(_translate("MainWindow", "Create"))
         self.label_9.setText(_translate("MainWindow", "Alter process: "))
         self.btnPause.setText(_translate("MainWindow", "Pause"))
@@ -280,12 +326,8 @@ class Ui_MainWindow(object):
         self.label_13.setText(_translate("MainWindow", "Define Algorithm"))
         self.cmbSelectAlgorithm.setItemText(0, _translate("MainWindow", "FIFO"))
         self.cmbSelectAlgorithm.setItemText(1, _translate("MainWindow", "SJF"))
-        self.cmbSelectAlgorithm.setItemText(2, _translate("MainWindow", "HRRN"))
+        self.cmbSelectAlgorithm.setItemText(2, _translate("MainWindow", "tercero"))
         self.cmbSelectAlgorithm.setItemText(3, _translate("MainWindow", "cuarto"))
-        self.label_10.setText(_translate("MainWindow", "Create Service:"))
-        self.label_14.setText(_translate("MainWindow", "Service Name"))
-        self.label_15.setText(_translate("MainWindow", "Service size:"))
-        self.btnCreateService.setText(_translate("MainWindow", "Create"))
         self.btnLauch.setText(_translate("MainWindow", "Lauch"))
 
 

@@ -20,10 +20,9 @@ class MainWindow(QMainWindow):##Inicio de clase
         self.service_list = []
         self.machine_parameters = None
         self.processor = None
-        self.ui.btnCreateProccess.clicked.connect(self.handler_create_proces)
+        self.ui.btnCreateProccess.clicked.connect(self.handler_create_proces_service)
         self.ui.btnSetParameters.clicked.connect(self.define_machine)
         self.ui.btnLauch.clicked.connect(self.handle_launch)
-        self.ui.btnCreateService.clicked.connect(self.handler_create_service)
         self.process_id = []
         self.service_id = []
         self.schedul = Scheduler()
@@ -41,60 +40,60 @@ class MainWindow(QMainWindow):##Inicio de clase
         except Exception as e:
             print(e)
 
-
-    def handler_create_proces(self):
+    def handler_create_proces_service(self):
         process_size = self.ui.tfProcessSize.text()
         process_name = self.ui.tfProcessName.text()
         if process_size == '':
-            QMessageBox.critical(self, 'Error', 'A process cant be created with out a size')
+            QMessageBox.critical(self, 'Error', 'A process/service cant be created with out a size')
         elif process_name == '':
-            QMessageBox.critical(self, 'Error', 'A process cant be created without a name')
+            QMessageBox.critical(self, 'Error', 'A process/service cant be created without a name')
         elif process_size == '0':
-            QMessageBox.critical(self, 'Error', 'A process cant be created with a size zero')
+            QMessageBox.critical(self, 'Error', 'A process/service cant be created with a size zero')
         elif self.machine_parameters == None:
             QMessageBox.critical(self, 'Error','The machine parameters most be initialize')
         else:
-            new_process_id = self.find_avaliable_id()
-            new_process_priority = self.get_random_priority()
-            new_process_execution_time = self.get_random_execution_time()
-            new_process = Process(new_process_id, process_name, process_size, new_process_execution_time, new_process_priority)
-            if self.machine_parameters.assign_memory_to_process(new_process):
-                QMessageBox.about(self, 'Success', 'process created successfully')
-                print('process created successfully')
+            if self.ui.cmbType.currentText() == 'Process':
+                self.create_process(process_size, process_name)
             else:
-                QMessageBox.critical(self, 'Error', 'Could not reserve memory space for the process, the process cannot be created')
-                return
-            self.process_id.append(new_process_id)
-            self.process_list.append(new_process)
-            self.update_process_table()
-            self.init_prMemory_table()
-            self.init_seMemory_table()
+                self.create_service(process_size, process_name)
 
-    def handler_create_service(self):
-        service_size = self.ui.tfProcessSize_2.text()
-        service_name = "SERVICE: " + self.ui.tfProcessName_2.text()
-        if service_size == '':
-            QMessageBox.critical(self, 'Error', 'A Service cant be created with out a size')
-        elif service_name == '':
-            QMessageBox.critical(self, 'Error', 'A Service cant be created without a name')
-        elif service_size == '0':
-            QMessageBox.critical(self, 'Error', 'A Service cant be created with a size zero')
-        elif self.machine_parameters == None:
-            QMessageBox.critical(self, 'Error','The machine parameters most be initialize')
+    def create_process(self, process_size, process_name):
+        new_process_id = self.find_avaliable_id()
+        new_process_priority = self.get_random_priority()
+        new_process_execution_time = self.get_random_execution_time()
+        new_process = Process(new_process_id, process_name, process_size, new_process_execution_time,
+                              new_process_priority)
+        if self.machine_parameters.assign_memory_to_process(new_process):
+            QMessageBox.about(self, 'Success', 'process created successfully')
+            print('process created successfully')
         else:
-            new_service_id = self.find_avaliable_id()
-            new_service = Service(new_service_id, service_name, service_size)
-            if self.machine_parameters.assign_memory_to_process(new_service):
-                QMessageBox.about(self, 'Success', 'Service created successfully')
-                print('Service created successfully')
-            else:
-                QMessageBox.critical(self, 'Error', 'Could not reserve memory space for the service, the service cannot be created')
-                return
-            self.service_id.append(new_service_id)
-            self.process_list.append(new_service)
-            self.update_process_table()
-            self.init_prMemory_table()
-            self.init_seMemory_table()
+            QMessageBox.critical(self, 'Error',
+                                 'Could not reserve memory space for the process, the process cannot be created')
+            return
+        self.process_id.append(new_process_id)
+        self.process_list.append(new_process)
+        self.update_process_table()
+        self.init_prMemory_table()
+        self.init_seMemory_table()
+
+    def create_service(self, service_size, service_name):
+        new_service_id = self.find_avaliable_id()
+        print("id del nuevo servicio", new_service_id)
+        new_service = Service(new_service_id, service_name, service_size)
+        print(new_service)
+        if self.machine_parameters.assign_memory_to_process(new_service):
+            QMessageBox.about(self, 'Success', 'Service created successfully')
+            print('Service created successfully')
+        # else:
+        #     QMessageBox.critical(self, 'Error','Could not reserve memory space for the service, the service cannot be created')
+        #     return
+        # self.service_id.append(new_service_id)
+        # self.process_list.append(new_service)
+        # self.update_process_table()
+        # self.init_prMemory_table()
+        # self.init_seMemory_table()
+
+
     def verify_pow2(self, number):
         if number <= 0:
             return False

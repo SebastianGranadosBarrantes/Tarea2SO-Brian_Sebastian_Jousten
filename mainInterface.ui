@@ -13,6 +13,68 @@
   <property name="windowTitle">
    <string>Process simulator</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true">
+QWidget {
+    background-color: #000000;
+}
+
+QLabel{
+	color:white;
+}
+
+QLineEdit{
+	 background-color: rgb(255, 255, 255);
+}
+
+QComboBox{
+	background-color: rgb(255, 255, 255);
+}
+
+QPushButton {
+    background-color: #afff7e;  /* Color de fondo */
+    color: #0000;  /* Color del texto */
+    border: 2px solid #ffbc37;  /* Borde con grosor de 2px y color */
+    border-radius: 10px;  /* Esquinas redondeadas */
+    padding: 5px;  /* Espaciado interno */
+}
+
+QPushButton:hover {
+    background-color: #2980b9;  /* Color de fondo al pasar el mouse */
+}
+
+QPushButton:pressed {
+    background-color: #1abc9c;  /* Color de fondo al hacer clic */
+}
+
+QTableWidget {
+    background-color: #f0f0f0;  /* Color de fondo del QTableWidget */
+    gridline-color: #d3d3d3;  /* Color de las líneas de la cuadrícula */
+    border: 1px solid #d3d3d3;  /* Borde del QTableWidget */
+}
+
+QTableWidget::item {
+    background-color: #ffffff;  /* Color de fondo de los ítems (celdas) */
+    color: #000000;  /* Color del texto de los ítems */
+}
+
+QTableWidget::item:selected {
+    background-color: #3399ff;  /* Color de fondo de las celdas seleccionadas */
+    color: #ffffff;  /* Color del texto de las celdas seleccionadas */
+}
+
+QTableWidget QHeaderView::section {
+    background-color: #cccccc;  /* Color de fondo de los encabezados */
+    color: #000000;  /* Color del texto de los encabezados */
+    padding: 4px;
+    border: 1px solid #d3d3d3;  /* Borde de los encabezados */
+}
+
+QTableWidget::item:focus {
+    outline: none;  /* Eliminar el borde por defecto al enfocarse en una celda */
+}
+</string>
+  </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QWidget" name="verticalLayoutWidget">
     <property name="geometry">
@@ -20,7 +82,7 @@
       <x>30</x>
       <y>0</y>
       <width>251</width>
-      <height>220</height>
+      <height>226</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout">
@@ -89,14 +151,14 @@
       <x>300</x>
       <y>0</y>
       <width>251</width>
-      <height>161</height>
+      <height>204</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_3">
      <item>
       <widget class="QLabel" name="label_5">
        <property name="text">
-        <string>Create Process:</string>
+        <string>Create Process/Sevice:</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignCenter</set>
@@ -106,7 +168,7 @@
      <item>
       <widget class="QLabel" name="label_6">
        <property name="text">
-        <string>Process Name</string>
+        <string>Process/Service Name</string>
        </property>
       </widget>
      </item>
@@ -116,12 +178,33 @@
      <item>
       <widget class="QLabel" name="label_7">
        <property name="text">
-        <string>Process size:</string>
+        <string>Process/Service size:</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QLineEdit" name="tfProcessSize"/>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_10">
+       <property name="text">
+        <string>Type</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="cmbType">
+       <item>
+        <property name="text">
+         <string>Process</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Service</string>
+        </property>
+       </item>
+      </widget>
      </item>
      <item>
       <widget class="QPushButton" name="btnCreateProccess">
@@ -137,7 +220,7 @@
      <rect>
       <x>20</x>
       <y>230</y>
-      <width>901</width>
+      <width>791</width>
       <height>161</height>
      </rect>
     </property>
@@ -331,7 +414,7 @@
    <widget class="QWidget" name="verticalLayoutWidget_7">
     <property name="geometry">
      <rect>
-      <x>830</x>
+      <x>570</x>
       <y>0</y>
       <width>160</width>
       <height>80</height>
@@ -371,59 +454,10 @@
      </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="verticalLayoutWidget_3">
-    <property name="geometry">
-     <rect>
-      <x>570</x>
-      <y>0</y>
-      <width>251</width>
-      <height>161</height>
-     </rect>
-    </property>
-    <layout class="QVBoxLayout" name="verticalLayout_7">
-     <item>
-      <widget class="QLabel" name="label_10">
-       <property name="text">
-        <string>Create Service:</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="label_14">
-       <property name="text">
-        <string>Service Name</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="tfProcessName_2"/>
-     </item>
-     <item>
-      <widget class="QLabel" name="label_15">
-       <property name="text">
-        <string>Service size:</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="tfProcessSize_2"/>
-     </item>
-     <item>
-      <widget class="QPushButton" name="btnCreateService">
-       <property name="text">
-        <string>Create</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </widget>
    <widget class="QPushButton" name="btnLauch">
     <property name="geometry">
      <rect>
-      <x>830</x>
+      <x>570</x>
       <y>90</y>
       <width>151</width>
       <height>24</height>
