@@ -1,5 +1,3 @@
-from sched import scheduler
-
 from Classes.Process import Process
 from Classes.Machine_Parameters import MachineParameters
 import random
@@ -8,7 +6,7 @@ from Classes.Processor import Processor
 from mainInterface import Ui_MainWindow
 from Classes.Scheduler import Scheduler
 
-class MainWindow(QMainWindow):##Inicio de clase
+class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.ui = Ui_MainWindow()
@@ -191,12 +189,20 @@ class MainWindow(QMainWindow):##Inicio de clase
         self.ui.tbwPrimaryMemory.setItem(row, 3, QTableWidgetItem(str(page.process_id)))
         self.ui.tbwPrimaryMemory.setItem(row, 4, QTableWidgetItem(str(page.process_name)))
 
-    def remove_process_from_tables(self):
-        self.process_list.remove(self.selected_process)
-        self.machine_parameters.remove_memory_from_process(self.selected_process)
+    def handle_process_finished(self, process_id):
+        process = self.find_process_per_id(process_id)
+        self.remove_process_from_tables(process)
+
+
+    def remove_process_from_tables(self, process):
+        self.process_list.remove(process)
+        self.machine_parameters.remove_memory_from_process(process)
         self.init_seMemory_table()
         self.init_prMemory_table()
-        self.selected_process.pages_table = []
+        if process.type == 'Service':
+            process.service_running = False
+        process.finishTime = 0
+        process.pages_table = []
         self.updateTblPrcs()
 
     def handle_pause_process(self):
@@ -208,24 +214,23 @@ class MainWindow(QMainWindow):##Inicio de clase
                 self.updateTblPrcs()
             else:
                 QMessageBox.warning(self, 'Warning', 'Process already paused')
-
-
     def handle_resume_process(self):
         if self.selected_process == -1 or self.selected_process is None:
             QMessageBox.critical(self, 'Error', 'Before resume please select a process from the table by selected him')
         else:
-            self.remove_process_from_tables()
+            self.remove_process_from_tables(self.selected_process)
             self.selected_process = None
-
-
 
     def handle_launch(self):
         if not self.machine_parameters or self.machine_parameters.secondary_memory_size == 0:
             QMessageBox.critical(self, 'Error', 'Before launching the program is necessary to set the machine parameters')
+        elif len(self.process_list) == 0:
+            QMessageBox.critical(self, 'Error', 'Before launching the program is necessary to set minimum one process')
         else:
             try:
                 self.processor = Processor(4)
                 self.algorithm = self.ui.cmbSelectAlgorithm.currentText()
+                self.processor.process_finished.connect(self.handle_process_finished)
                 if self.algorithm == 'SJF':
                     #ordena por nombre usando scheduler, para obtener un cambio controlado
                     self.schedul.sort_process_list_sjf(self.process_list)
@@ -238,11 +243,11 @@ class MainWindow(QMainWindow):##Inicio de clase
                     print("Algoritmo FIFO")
                     for process in self.process_list:
                         self.processor.add_process(process)
+                    self.processor.start()
 
                 else:
                     print("TTF aun no implementado")
                     #scheduler.sort_process_list_ft(self.process_list)
-                self.processor.handle_launch()
                 # self.updateTblPrcs()
             except Exception as e:
                 print(e)

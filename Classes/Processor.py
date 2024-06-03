@@ -1,25 +1,39 @@
 import time
 from queue import Queue
-from .Process import Process
+from PyQt6.QtCore import QThread, QMutex, pyqtSignal
 
-class Processor:
+
+class Processor(QThread):
+    process_finished = pyqtSignal(int)
     def __init__(self, num_cores):
+        super().__init__()
         self.num_cores = num_cores
         self.process_queue = Queue()
         self.cores = [None] * num_cores
+        self.mutex = QMutex()
+
+
 
     def add_process(self, process):
         self.process_queue.put(process)
 
-    def handle_launch(self):
+    def run(self):
         while not self.process_queue.empty() or any(self.cores):
+            #self.mutex.lock()
             for i in range(self.num_cores):
-                if self.cores[i] is None or not self.cores[i].is_alive():
+                if self.cores[i] is None or not self.cores[i].isRunning():
                     if not self.process_queue.empty():
                         process = self.process_queue.get()
                         self.cores[i] = process
+                        self.cores[i].process_finished.connect(self.on_process_finished)
                         process.start()
-            time.sleep(1)
+            #self.mutex.unlock()
+            self.msleep(1000)
         print("All processes have been executed.")
 
+    def on_process_finished(self, process_id):
+        print('Capturando signal')
+        print(process_id)
+        # Informar a la vista que el proceso ha terminado
+        self.process_finished.emit(process_id)
 
