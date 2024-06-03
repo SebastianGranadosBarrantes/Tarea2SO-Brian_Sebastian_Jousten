@@ -3,7 +3,7 @@ import time
 from os import system
 
 class Process(threading.Thread):
-    def __init__(self, idProcess, processName, processSize, finishTime, priority):
+    def __init__(self, idProcess, processName, processSize, finishTime, priority, type):
         super().__init__()
         self.idProcess = idProcess
         self.awaitingTime = 0
@@ -17,15 +17,20 @@ class Process(threading.Thread):
         self.state = 'Await'  # states are await, ready and execution
         self.processSize = int(processSize)
         self.pages_table = []
+        self.type = type
 
     def run(self):
-        print(f'Process {self.idProcess} ({self.processName}) started with finish time {self.finishTime}')
-        while self.executionTime < self.finishTime:
-            time.sleep(1)
-            self.executionTime += 1
-            print(f'Process {self.idProcess} ({self.processName}) executing, time left: {self.finishTime - self.executionTime}')
-            print()
-        print(f'Process {self.idProcess} ({self.processName}) finished')
+        if self.type == 'Process':
+            print(f'Process {self.idProcess} ({self.processName}) started with finish time {self.finishTime}')
+            while self.executionTime < self.finishTime:
+                time.sleep(1)
+                self.executionTime += 1
+                print(f'Process {self.idProcess} ({self.processName}) executing, time left: {self.finishTime - self.executionTime}')
+                print()
+            print(f'Process {self.idProcess} ({self.processName}) finished')
+        else:
+            while True:
+                print(f'Service {self.idProcess} ({self.processName}) in execution')
 
     def __str__(self):
         return (f"Process(idProcess={self.idProcess}, "

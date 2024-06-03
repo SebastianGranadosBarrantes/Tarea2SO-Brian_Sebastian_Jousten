@@ -281,6 +281,11 @@ QTableWidget::item:focus {
          </column>
          <column>
           <property name="text">
+           <string>Type</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
            <string>Name</string>
           </property>
          </column>

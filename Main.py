@@ -17,14 +17,12 @@ class MainWindow(QMainWindow):##Inicio de clase
         self.ui.setupUi(self)
         self.algorithm = ''
         self.process_list = []
-        self.service_list = []
         self.machine_parameters = None
         self.processor = None
         self.ui.btnCreateProccess.clicked.connect(self.handler_create_proces_service)
         self.ui.btnSetParameters.clicked.connect(self.define_machine)
         self.ui.btnLauch.clicked.connect(self.handle_launch)
         self.process_id = []
-        self.service_id = []
         self.schedul = Scheduler()
 
     #actualizar tabla luego de hacer ordenamiento
@@ -52,47 +50,21 @@ class MainWindow(QMainWindow):##Inicio de clase
         elif self.machine_parameters == None:
             QMessageBox.critical(self, 'Error','The machine parameters most be initialize')
         else:
-            if self.ui.cmbType.currentText() == 'Process':
-                self.create_process(process_size, process_name)
+            new_process_id = self.find_avaliable_id()
+            new_process_priority = self.get_random_priority()
+            new_process_execution_time = self.get_random_execution_time()
+            new_process_type = self.ui.cmbType.currentText()
+            new_process = Process(new_process_id, process_name, process_size, new_process_execution_time, new_process_priority, new_process_type)
+            if self.machine_parameters.assign_memory_to_process(new_process):
+                QMessageBox.about(self, 'Success', 'process created successfully')
             else:
-                self.create_service(process_size, process_name)
-
-    def create_process(self, process_size, process_name):
-        new_process_id = self.find_avaliable_id()
-        new_process_priority = self.get_random_priority()
-        new_process_execution_time = self.get_random_execution_time()
-        new_process = Process(new_process_id, process_name, process_size, new_process_execution_time,
-                              new_process_priority)
-        if self.machine_parameters.assign_memory_to_process(new_process):
-            QMessageBox.about(self, 'Success', 'process created successfully')
-            print('process created successfully')
-        else:
-            QMessageBox.critical(self, 'Error',
-                                 'Could not reserve memory space for the process, the process cannot be created')
-            return
-        self.process_id.append(new_process_id)
-        self.process_list.append(new_process)
-        self.update_process_table()
-        self.init_prMemory_table()
-        self.init_seMemory_table()
-
-    def create_service(self, service_size, service_name):
-        new_service_id = self.find_avaliable_id()
-        print("id del nuevo servicio", new_service_id)
-        new_service = Service(new_service_id, service_name, service_size)
-        print(new_service)
-        if self.machine_parameters.assign_memory_to_process(new_service):
-            QMessageBox.about(self, 'Success', 'Service created successfully')
-            print('Service created successfully')
-        # else:
-        #     QMessageBox.critical(self, 'Error','Could not reserve memory space for the service, the service cannot be created')
-        #     return
-        # self.service_id.append(new_service_id)
-        # self.process_list.append(new_service)
-        # self.update_process_table()
-        # self.init_prMemory_table()
-        # self.init_seMemory_table()
-
+                QMessageBox.critical(self, 'Error','Could not reserve memory space for the process, the process cannot be created')
+                return
+            self.process_list.append(new_process)
+            self.process_id.append(new_process_id)
+            self.update_process_table()
+            self.init_prMemory_table()
+            self.init_seMemory_table()
 
     def verify_pow2(self, number):
         if number <= 0:
@@ -132,10 +104,11 @@ class MainWindow(QMainWindow):##Inicio de clase
         print(self.ui.tbwProcess.columnCount())
 
         self.ui.tbwProcess.setItem(actual_row, 0, QTableWidgetItem(str(process.idProcess)))
-        self.ui.tbwProcess.setItem(actual_row, 1, QTableWidgetItem(process.processName))
-        self.ui.tbwProcess.setItem(actual_row, 2, QTableWidgetItem(str(process.processSize)))
-        self.ui.tbwProcess.setItem(actual_row, 3, QTableWidgetItem(str(process.pageNumber)))
-        self.ui.tbwProcess.setItem(actual_row, 4, QTableWidgetItem(process.state))
+        self.ui.tbwProcess.setItem(actual_row, 1, QTableWidgetItem(process.type))
+        self.ui.tbwProcess.setItem(actual_row, 2, QTableWidgetItem(process.processName))
+        self.ui.tbwProcess.setItem(actual_row, 3, QTableWidgetItem(str(process.processSize)))
+        self.ui.tbwProcess.setItem(actual_row, 4, QTableWidgetItem(str(process.pageNumber)))
+        self.ui.tbwProcess.setItem(actual_row, 5, QTableWidgetItem(process.state))
         #self.ui.tbwProcess.setItem(actual_row, 5, QTableWidgetItem(str(process.pages_per_principal)))
         #self.ui.tbwProcess.setItem(actual_row, 6, QTableWidgetItem(str(process.pages_per_secondary)))
 

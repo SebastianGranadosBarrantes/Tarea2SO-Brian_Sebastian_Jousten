@@ -28,8 +28,8 @@ class Memory:
             page.process_id = process_id
             page.process_name = process_name
             page.use = True
-            print(f'El page es {page}')
-            page.execution_page_number = self.unused_pages_id.pop(-1)
+            print(self.unused_pages_id)
+            page.execution_page_number = self.unused_pages_id.pop(0)
             self.unused_pages_id.sort()
             self.used_pages.append(page)
             return page
