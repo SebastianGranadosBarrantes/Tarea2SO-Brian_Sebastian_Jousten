@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1001</width>
-    <height>625</height>
+    <width>1353</width>
+    <height>652</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -151,7 +151,7 @@ QTableWidget::item:focus {
       <x>300</x>
       <y>0</y>
       <width>251</width>
-      <height>204</height>
+      <height>238</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -213,13 +213,20 @@ QTableWidget::item:focus {
        </property>
       </widget>
      </item>
+     <item>
+      <widget class="QPushButton" name="btnGenerateRandom">
+       <property name="text">
+        <string>Generate random</string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </widget>
    <widget class="QWidget" name="horizontalLayoutWidget">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>230</y>
+      <x>10</x>
+      <y>240</y>
       <width>791</width>
       <height>161</height>
      </rect>

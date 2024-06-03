@@ -25,6 +25,7 @@ class Processor(QThread):
                     if not self.process_queue.empty():
                         process = self.process_queue.get()
                         self.cores[i] = process
+                        self.cores[i].state = 'Execution'
                         self.cores[i].process_finished.connect(self.on_process_finished)
                         process.start()
             #self.mutex.unlock()
@@ -34,6 +35,5 @@ class Processor(QThread):
     def on_process_finished(self, process_id):
         print('Capturando signal')
         print(process_id)
-        # Informar a la vista que el proceso ha terminado
         self.process_finished.emit(process_id)
 
