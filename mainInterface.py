@@ -12,7 +12,7 @@ from PyQt6 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1001, 625)
+        MainWindow.resize(1353, 652)
         MainWindow.setStyleSheet("\n"
 "QWidget {\n"
 "    background-color: #000000;\n"
@@ -111,7 +111,7 @@ class Ui_MainWindow(object):
         self.btnSetParameters.setObjectName("btnSetParameters")
         self.verticalLayout.addWidget(self.btnSetParameters)
         self.verticalLayoutWidget_2 = QtWidgets.QWidget(parent=self.centralwidget)
-        self.verticalLayoutWidget_2.setGeometry(QtCore.QRect(300, 0, 251, 204))
+        self.verticalLayoutWidget_2.setGeometry(QtCore.QRect(300, 0, 251, 238))
         self.verticalLayoutWidget_2.setObjectName("verticalLayoutWidget_2")
         self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.verticalLayoutWidget_2)
         self.verticalLayout_3.setContentsMargins(0, 0, 0, 0)
@@ -143,8 +143,11 @@ class Ui_MainWindow(object):
         self.btnCreateProccess = QtWidgets.QPushButton(parent=self.verticalLayoutWidget_2)
         self.btnCreateProccess.setObjectName("btnCreateProccess")
         self.verticalLayout_3.addWidget(self.btnCreateProccess)
+        self.btnGenerateRandom = QtWidgets.QPushButton(parent=self.verticalLayoutWidget_2)
+        self.btnGenerateRandom.setObjectName("btnGenerateRandom")
+        self.verticalLayout_3.addWidget(self.btnGenerateRandom)
         self.horizontalLayoutWidget = QtWidgets.QWidget(parent=self.centralwidget)
-        self.horizontalLayoutWidget.setGeometry(QtCore.QRect(20, 230, 791, 161))
+        self.horizontalLayoutWidget.setGeometry(QtCore.QRect(10, 240, 791, 161))
         self.horizontalLayoutWidget.setObjectName("horizontalLayoutWidget")
         self.horizontalLayout = QtWidgets.QHBoxLayout(self.horizontalLayoutWidget)
         self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
@@ -284,6 +287,7 @@ class Ui_MainWindow(object):
         self.cmbType.setItemText(0, _translate("MainWindow", "Process"))
         self.cmbType.setItemText(1, _translate("MainWindow", "Service"))
         self.btnCreateProccess.setText(_translate("MainWindow", "Create"))
+        self.btnGenerateRandom.setText(_translate("MainWindow", "Generate random"))
         self.label_9.setText(_translate("MainWindow", "Alter process: "))
         self.btnPause.setText(_translate("MainWindow", "Pause"))
         self.btnDone.setText(_translate("MainWindow", "Done"))
