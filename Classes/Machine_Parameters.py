@@ -11,6 +11,7 @@ class MachineParameters:
         self.pages_per_secondary_memory = self.calculate_pages_per_smemory()
         self.primary_memory = Memory(self.primary_memory_size, self.pages_per_primary_memory, pages_size)
         self.secondary_memory = Memory(self.secondary_memory_size, self.pages_per_secondary_memory, pages_size)
+        self.remain_memory = primary_memory + secondary_memory
 
     def calculate_pages_per_pmemory(self):
         if self.primary_memory_size != 0:
@@ -90,3 +91,9 @@ class MachineParameters:
 
     def get_secondary_memory_pages(self):
         return self.secondary_memory.memory
+
+    def update_remaining_memory(self, memory):
+        self.remain_memory += memory
+
+    def get_remaining_memory(self):
+        return self.remain_memory

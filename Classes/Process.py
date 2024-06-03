@@ -48,3 +48,6 @@ class Process(QThread):
                 f"pageNumber={self.pageNumber}, "
                 f"state={self.state}, "
                 f"processSize={self.processSize})")
+
+    def get_size(self):
+        return self.processSize

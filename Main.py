@@ -17,6 +17,8 @@ class MainWindow(QMainWindow):
         self.processor = None
         self.ui.btnCreateProccess.clicked.connect(self.handler_create_proces_service)
         self.ui.btnSetParameters.clicked.connect(self.define_machine)
+        self.ui.btnGenerateRandom.clicked.connect(self.create_random_proc)
+
         self.ui.btnLauch.clicked.connect(self.handle_launch)
         self.ui.tbwProcess.itemSelectionChanged.connect(self.get_process_from_table)
         self.ui.btnPause.clicked.connect(self.handle_pause_process)
@@ -42,30 +44,49 @@ class MainWindow(QMainWindow):
     def handler_create_proces_service(self):
         process_size = self.ui.tfProcessSize.text()
         process_name = self.ui.tfProcessName.text()
+        new_process_type = self.ui.cmbType.currentText()
         if process_size == '':
             QMessageBox.critical(self, 'Error', 'A process/service cant be created with out a size')
         elif process_name == '':
             QMessageBox.critical(self, 'Error', 'A process/service cant be created without a name')
         elif process_size == '0':
             QMessageBox.critical(self, 'Error', 'A process/service cant be created with a size zero')
-        elif self.machine_parameters == None:
+        elif self.machine_parameters is None:
             QMessageBox.critical(self, 'Error','The machine parameters most be initialize')
         else:
-            new_process_id = self.find_avaliable_id()
-            new_process_priority = self.get_random_priority()
-            new_process_execution_time = self.get_random_execution_time()
-            new_process_type = self.ui.cmbType.currentText()
-            new_process = Process(new_process_id, process_name, process_size, new_process_execution_time, new_process_priority, new_process_type)
-            if self.machine_parameters.assign_memory_to_process(new_process):
-                QMessageBox.about(self, 'Success', 'process created successfully')
-            else:
-                QMessageBox.critical(self, 'Error','Could not reserve memory space for the process, the process cannot be created')
-                return
-            self.process_list.append(new_process)
-            self.process_id.append(new_process_id)
-            self.update_process_table()
-            self.init_prMemory_table()
-            self.init_seMemory_table()
+            self.create_proces_service(new_process_type, process_name, process_size)
+
+    def create_proces_service(self, new_process_type, process_name, process_size):
+        new_process_id = self.find_avaliable_id()
+        new_process_priority = self.get_random_priority()
+        new_process_execution_time = self.get_random_execution_time()
+        new_process = Process(new_process_id, process_name, process_size, new_process_execution_time, new_process_priority, new_process_type)
+        if self.machine_parameters.assign_memory_to_process(new_process):
+            QMessageBox.about(self, 'Success', 'process created successfully')
+        else:
+            QMessageBox.critical(self, 'Error','Could not reserve memory space for the process, the process cannot be created')
+            return
+        print(self.machine_parameters.get_remaining_memory())
+        self.machine_parameters.update_remaining_memory(-process_size)
+        print(self.machine_parameters.get_remaining_memory())
+        self.schedul.add_process(new_process)
+        self.process_list.append(new_process)
+        self.process_id.append(new_process_id)
+        self.update_process_table()
+        self.init_prMemory_table()
+        self.init_seMemory_table()
+
+    def create_random_proc(self):
+        try:
+            process_size = random.randint(1, self.machine_parameters.get_remaining_memory())
+            option = 0
+            new_process_type = "Process" if option == 0 else "Service"
+            process_name = new_process_type + str(random.randint(1, 100))
+            self.create_proces_service(new_process_type, process_name, process_size)
+        except Exception as e:
+            print(e)
+
+
 
     def verify_pow2(self, number):
         if number <= 0:
@@ -195,15 +216,22 @@ class MainWindow(QMainWindow):
 
 
     def remove_process_from_tables(self, process):
-        self.process_list.remove(process)
-        self.machine_parameters.remove_memory_from_process(process)
-        self.init_seMemory_table()
-        self.init_prMemory_table()
-        if process.type == 'Service':
-            process.service_running = False
-        process.finishTime = 0
-        process.pages_table = []
-        self.updateTblPrcs()
+        try:
+            self.process_list.remove(process)
+            self.schedul.delete_process(process)
+            print(self.machine_parameters.get_remaining_memory())
+            self.machine_parameters.update_remaining_memory(process.get_size())
+            print(self.machine_parameters.get_remaining_memory())
+            self.machine_parameters.remove_memory_from_process(process)
+            self.init_seMemory_table()
+            self.init_prMemory_table()
+            if process.type == 'Service':
+                process.service_running = False
+            process.finishTime = 0
+            process.pages_table = []
+            self.updateTblPrcs()
+        except Exception as e:
+            print(e)
 
     def handle_pause_process(self):
         if self.selected_process == -1 or self.selected_process is None:
@@ -215,11 +243,11 @@ class MainWindow(QMainWindow):
             else:
                 QMessageBox.warning(self, 'Warning', 'Process already paused')
     def handle_resume_process(self):
-        if self.selected_process == -1 or self.selected_process is None:
-            QMessageBox.critical(self, 'Error', 'Before resume please select a process from the table by selected him')
-        else:
-            self.remove_process_from_tables(self.selected_process)
-            self.selected_process = None
+            if self.selected_process == -1 or self.selected_process is None:
+                QMessageBox.critical(self, 'Error', 'Before resume please select a process from the table by selected him')
+            else:
+                self.remove_process_from_tables(self.selected_process)
+                self.selected_process = None
 
     def handle_launch(self):
         if not self.machine_parameters or self.machine_parameters.secondary_memory_size == 0:
@@ -232,23 +260,15 @@ class MainWindow(QMainWindow):
                 self.algorithm = self.ui.cmbSelectAlgorithm.currentText()
                 self.processor.process_finished.connect(self.handle_process_finished)
                 if self.algorithm == 'SJF':
-                    #ordena por nombre usando scheduler, para obtener un cambio controlado
                     self.schedul.sort_process_list_sjf(self.process_list)
-                    
                 elif self.algorithm == 'HRRN':
-                    print("HRRN aun no implementado")
-                    #scheduler.sort_process_list_hrrn(self.process_list)
-
+                    self.schedul.sort_process_list_hrrn(self.process_list)
                 elif self.algorithm == 'FIFO':
-                    print("Algoritmo FIFO")
-                    for process in self.process_list:
-                        self.processor.add_process(process)
-                    self.processor.start()
-
-                else:
-                    print("TTF aun no implementado")
-                    #scheduler.sort_process_list_ft(self.process_list)
-                # self.updateTblPrcs()
+                    self.process_list = self.schedul.get_processes_fifo()
+                for process in self.process_list:
+                    self.processor.add_process(process)
+                self.processor.start()
+                self.updateTblPrcs()
             except Exception as e:
                 print(e)
 
@@ -277,6 +297,7 @@ class MainWindow(QMainWindow):
             if process.idProcess == int(process_id):
                 return process
         return -1
+
 if __name__ == "__main__":
     app = QApplication([])
     window = MainWindow()
