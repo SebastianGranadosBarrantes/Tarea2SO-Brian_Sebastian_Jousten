@@ -1,6 +1,6 @@
 import time
 from queue import Queue
-
+from .Process import Process
 
 class Processor:
     def __init__(self, num_cores):
@@ -21,3 +21,5 @@ class Processor:
                         process.start()
             time.sleep(1)
         print("All processes have been executed.")
+
+

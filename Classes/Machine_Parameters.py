@@ -69,6 +69,10 @@ class MachineParameters:
             return False
         return True
 
+    def remove_memory_from_process(self, process):
+        self.primary_memory.delete_process_in_memory(process.idProcess)
+        self.secondary_memory.delete_process_in_memory(process.idProcess)
+
     def calculate_pages_per_smemory(self):
         if self.secondary_memory_size != 0:
             return math.ceil(self.secondary_memory_size / self.pages_size)

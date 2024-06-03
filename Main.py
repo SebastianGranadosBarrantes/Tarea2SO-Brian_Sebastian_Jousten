@@ -4,9 +4,7 @@ from Classes.Process import Process
 from Classes.Machine_Parameters import MachineParameters
 import random
 from PyQt6.QtWidgets import QApplication, QMainWindow, QMessageBox, QTableWidgetItem
-
 from Classes.Processor import Processor
-from Classes.Services import Service
 from mainInterface import Ui_MainWindow
 from Classes.Scheduler import Scheduler
 
@@ -22,8 +20,12 @@ class MainWindow(QMainWindow):##Inicio de clase
         self.ui.btnCreateProccess.clicked.connect(self.handler_create_proces_service)
         self.ui.btnSetParameters.clicked.connect(self.define_machine)
         self.ui.btnLauch.clicked.connect(self.handle_launch)
+        self.ui.tbwProcess.itemSelectionChanged.connect(self.get_process_from_table)
+        self.ui.btnPause.clicked.connect(self.handle_pause_process)
+        self.ui.btnDone.clicked.connect(self.handle_resume_process)
         self.process_id = []
         self.schedul = Scheduler()
+        self.selected_process = None
 
     #actualizar tabla luego de hacer ordenamiento
     def updateTblPrcs(self):
@@ -31,10 +33,11 @@ class MainWindow(QMainWindow):##Inicio de clase
             self.ui.tbwProcess.setRowCount(len(self.process_list))
             for i in range(len(self.process_list)):
                 self.ui.tbwProcess.setItem(i, 0, QTableWidgetItem(str(self.process_list[i].idProcess)))
-                self.ui.tbwProcess.setItem(i, 1, QTableWidgetItem(self.process_list[i].processName))
-                self.ui.tbwProcess.setItem(i, 2, QTableWidgetItem(str(self.process_list[i].processSize)))
-                self.ui.tbwProcess.setItem(i, 3, QTableWidgetItem(str(self.process_list[i].pageNumber)))
-                self.ui.tbwProcess.setItem(i, 4, QTableWidgetItem(self.process_list[i].state))
+                self.ui.tbwProcess.setItem(i, 1, QTableWidgetItem(str(self.process_list[i].type)))
+                self.ui.tbwProcess.setItem(i, 2, QTableWidgetItem(self.process_list[i].processName))
+                self.ui.tbwProcess.setItem(i, 3, QTableWidgetItem(str(self.process_list[i].processSize)))
+                self.ui.tbwProcess.setItem(i, 4, QTableWidgetItem(str(self.process_list[i].pageNumber)))
+                self.ui.tbwProcess.setItem(i, 5, QTableWidgetItem(self.process_list[i].state))
         except Exception as e:
             print(e)
 
@@ -102,7 +105,6 @@ class MainWindow(QMainWindow):##Inicio de clase
         actual_row = self.ui.tbwProcess.rowCount()
         self.ui.tbwProcess.insertRow(actual_row)
         print(self.ui.tbwProcess.columnCount())
-
         self.ui.tbwProcess.setItem(actual_row, 0, QTableWidgetItem(str(process.idProcess)))
         self.ui.tbwProcess.setItem(actual_row, 1, QTableWidgetItem(process.type))
         self.ui.tbwProcess.setItem(actual_row, 2, QTableWidgetItem(process.processName))
@@ -112,9 +114,13 @@ class MainWindow(QMainWindow):##Inicio de clase
         #self.ui.tbwProcess.setItem(actual_row, 5, QTableWidgetItem(str(process.pages_per_principal)))
         #self.ui.tbwProcess.setItem(actual_row, 6, QTableWidgetItem(str(process.pages_per_secondary)))
 
-        print(f'El tamanno de la lista es ${len(self.process_list)}')
-
-
+    def get_process_from_table(self):
+        selected_process = self.ui.tbwProcess.currentRow()
+        if selected_process != -1:
+            item = self.ui.tbwProcess.item(selected_process, 0)
+            if item:
+                self.selected_process = self.find_process_per_id(item.text())
+        print(self.selected_process)
     def init_prMemory_table(self):
         self.ui.tbwPrimaryMemory.clearContents()
         self.ui.tbwPrimaryMemory.setRowCount(0)
@@ -171,6 +177,11 @@ class MainWindow(QMainWindow):##Inicio de clase
                 return row
         return -1
 
+    def find_row_proccess_table_per_processId(self, process_id):
+        for row in range(self.ui.tbwProcess.rowCount()):
+            process = self.ui.tbwProcess.item(row, 0)
+            if int(process.text()) == process_id:
+                return row
     def alter_prMemory_table(self, page_number):
         row = self.find_row_pgN_prMemo(page_number)
         page = self.machine_parameters.get_principal_memory_pages()[row]
@@ -179,6 +190,33 @@ class MainWindow(QMainWindow):##Inicio de clase
         self.ui.tbwPrimaryMemory.setItem(row, 2, QTableWidgetItem(str(page.execution_page_number)))
         self.ui.tbwPrimaryMemory.setItem(row, 3, QTableWidgetItem(str(page.process_id)))
         self.ui.tbwPrimaryMemory.setItem(row, 4, QTableWidgetItem(str(page.process_name)))
+
+    def remove_process_from_tables(self):
+        self.process_list.remove(self.selected_process)
+        self.machine_parameters.remove_memory_from_process(self.selected_process)
+        self.init_seMemory_table()
+        self.init_prMemory_table()
+        self.selected_process.pages_table = []
+        self.updateTblPrcs()
+
+    def handle_pause_process(self):
+        if self.selected_process == -1 or self.selected_process is None:
+            QMessageBox.critical(self, 'Error', 'Before pause please select a process from the table by selected him')
+        else:
+            if self.selected_process.state == 'Execution':
+                self.selected_process.state = 'Await'
+                self.updateTblPrcs()
+            else:
+                QMessageBox.warning(self, 'Warning', 'Process already paused')
+
+
+    def handle_resume_process(self):
+        if self.selected_process == -1 or self.selected_process is None:
+            QMessageBox.critical(self, 'Error', 'Before resume please select a process from the table by selected him')
+        else:
+            self.remove_process_from_tables()
+            self.selected_process = None
+
 
 
     def handle_launch(self):
@@ -205,7 +243,7 @@ class MainWindow(QMainWindow):##Inicio de clase
                     print("TTF aun no implementado")
                     #scheduler.sort_process_list_ft(self.process_list)
                 self.processor.handle_launch()
-                self.updateTblPrcs()
+                # self.updateTblPrcs()
             except Exception as e:
                 print(e)
 
@@ -229,30 +267,18 @@ class MainWindow(QMainWindow):##Inicio de clase
                 counter += 1
         return counter
 
-##Fin de clase
-
-### MAIN ###
-### MAIN ###
-### MAIN ###
-
+    def find_process_per_id(self, process_id):
+        for process in self.process_list:
+            if process.idProcess == int(process_id):
+                return process
+        return -1
 if __name__ == "__main__":
     app = QApplication([])
     window = MainWindow()
     window.show()
     app.exec()
 
-def set_algorithm(option):
-    algorithm = option
-    print(f'El algoritmo se seteo a {algorithm}')
 
-
-
-
-global process_list
-process_list = []
-
-global algorithm
-algorithm = ''
 
 
 

@@ -28,7 +28,6 @@ class Memory:
             page.process_id = process_id
             page.process_name = process_name
             page.use = True
-            print(self.unused_pages_id)
             page.execution_page_number = self.unused_pages_id.pop(0)
             self.unused_pages_id.sort()
             self.used_pages.append(page)
@@ -36,17 +35,15 @@ class Memory:
         else:
             return False
 
-    def delete_process_in_memory(self, process_id, page_number):
-        page_to_clean = None
+    def delete_process_in_memory(self, process_id):
+        pages_to_remove = []
         for page in self.used_pages:
-            if page.process_id == process_id and page.page_number == page_number:
+            if page.process_id == process_id:
                 self.unused_pages_id.append(page.execution_page_number)
                 self.unused_pages_id.sort()
-                page_to_clean = page
+                self.available_pages.append(page)
+                pages_to_remove.append(page)
+                page.clean_page()
 
-        if page_to_clean:
-            self.used_pages.remove(page_to_clean)
-            page_to_clean.clean_page()
-            self.available_pages.append(page_to_clean)
-        else:
-            print('Error, page not found')
+        for page in pages_to_remove:
+            self.used_pages.remove(page)

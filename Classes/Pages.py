@@ -10,7 +10,7 @@ class Page:
 
     def clean_page(self):
         self.use = False
-        self.process_id = 0
+        self.process_id = ''
         self.process_name = ''
         self.execution_page_number = ''
 
