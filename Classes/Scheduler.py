@@ -1,6 +1,6 @@
 class Scheduler:
     def __init__(self):
-        self.methods = ["SJF","FIFO","HRRN"]
+        self.methods = ["SJF","FIFO","HRRN","PRIORITY"]
         self.processes = []
 
     #Shortest Job First
@@ -15,6 +15,9 @@ class Scheduler:
     def get_processes_fifo(self):
         return self.processes
 
+    #Prioridad
+    def sort_process_list_priority(self,process_list):
+        return process_list.sort(key=lambda x: x.priority)
 
     def get_methods(self):
         return self.methods

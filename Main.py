@@ -45,41 +45,49 @@ class MainWindow(QMainWindow):
         process_size = self.ui.tfProcessSize.text()
         process_name = self.ui.tfProcessName.text()
         new_process_type = self.ui.cmbType.currentText()
-        if process_size == '':
-            QMessageBox.critical(self, 'Error', 'A process/service cant be created with out a size')
+        if self.machine_parameters is None:
+            QMessageBox.critical(self, 'Error','The machine parameters most be initialize')
         elif process_name == '':
             QMessageBox.critical(self, 'Error', 'A process/service cant be created without a name')
+        elif process_size == '':
+            QMessageBox.critical(self, 'Error', 'A process/service cant be created with out a size')
         elif process_size == '0':
             QMessageBox.critical(self, 'Error', 'A process/service cant be created with a size zero')
-        elif self.machine_parameters is None:
-            QMessageBox.critical(self, 'Error','The machine parameters most be initialize')
+
         else:
             self.create_proces_service(new_process_type, process_name, process_size)
 
     def create_proces_service(self, new_process_type, process_name, process_size):
-        new_process_id = self.find_avaliable_id()
-        new_process_priority = self.get_random_priority()
-        new_process_execution_time = self.get_random_execution_time()
-        new_process = Process(new_process_id, process_name, process_size, new_process_execution_time, new_process_priority, new_process_type)
-        if self.machine_parameters.assign_memory_to_process(new_process):
-            QMessageBox.about(self, 'Success', 'process created successfully')
-        else:
-            QMessageBox.critical(self, 'Error','Could not reserve memory space for the process, the process cannot be created')
-            return
-        print(self.machine_parameters.get_remaining_memory())
-        self.machine_parameters.update_remaining_memory(-process_size)
-        print(self.machine_parameters.get_remaining_memory())
-        self.schedul.add_process(new_process)
-        self.process_list.append(new_process)
-        self.process_id.append(new_process_id)
-        self.update_process_table()
-        self.init_prMemory_table()
-        self.init_seMemory_table()
+        try:
+            new_process_id = self.find_avaliable_id()
+            new_process_priority = self.get_random_priority()
+            new_process_execution_time = self.get_random_execution_time()
+            new_process = Process(new_process_id, process_name, process_size, new_process_execution_time, new_process_priority, new_process_type)
+            if self.machine_parameters.assign_memory_to_process(new_process):
+                QMessageBox.about(self, 'Success', 'process created successfully')
+            else:
+                QMessageBox.critical(self, 'Error','Could not reserve memory space for the process, the process cannot be created')
+                return
+            print(self.machine_parameters.get_remaining_memory())
+            self.machine_parameters.update_remaining_memory(process_size,True)
+            print(self.machine_parameters.get_remaining_memory())
+
+            self.schedul.add_process(new_process)
+            self.process_list.append(new_process)
+            self.process_id.append(new_process_id)
+            self.update_process_table()
+            self.init_prMemory_table()
+            self.init_seMemory_table()
+        except Exception as e:
+            print(e)
 
     def create_random_proc(self):
         try:
+            if self.machine_parameters is None:
+                QMessageBox.critical(self, 'Error', 'The machine parameters most be initialize')
+                return
             process_size = random.randint(1, self.machine_parameters.get_remaining_memory())
-            option = 0
+            option = random.randint(0,1)
             new_process_type = "Process" if option == 0 else "Service"
             process_name = new_process_type + str(random.randint(1, 100))
             self.create_proces_service(new_process_type, process_name, process_size)
@@ -123,7 +131,6 @@ class MainWindow(QMainWindow):
         process = self.process_list[-1]
         actual_row = self.ui.tbwProcess.rowCount()
         self.ui.tbwProcess.insertRow(actual_row)
-        print(self.ui.tbwProcess.columnCount())
         self.ui.tbwProcess.setItem(actual_row, 0, QTableWidgetItem(str(process.idProcess)))
         self.ui.tbwProcess.setItem(actual_row, 1, QTableWidgetItem(process.type))
         self.ui.tbwProcess.setItem(actual_row, 2, QTableWidgetItem(process.processName))
@@ -139,7 +146,6 @@ class MainWindow(QMainWindow):
             item = self.ui.tbwProcess.item(selected_process, 0)
             if item:
                 self.selected_process = self.find_process_per_id(item.text())
-        print(self.selected_process)
     def init_prMemory_table(self):
         self.ui.tbwPrimaryMemory.clearContents()
         self.ui.tbwPrimaryMemory.setRowCount(0)
@@ -220,7 +226,7 @@ class MainWindow(QMainWindow):
             self.process_list.remove(process)
             self.schedul.delete_process(process)
             print(self.machine_parameters.get_remaining_memory())
-            self.machine_parameters.update_remaining_memory(process.get_size())
+            self.machine_parameters.update_remaining_memory(process.get_size(),False)
             print(self.machine_parameters.get_remaining_memory())
             self.machine_parameters.remove_memory_from_process(process)
             self.init_seMemory_table()
@@ -265,6 +271,8 @@ class MainWindow(QMainWindow):
                     self.schedul.sort_process_list_hrrn(self.process_list)
                 elif self.algorithm == 'FIFO':
                     self.process_list = self.schedul.get_processes_fifo()
+                elif self.algorithm == 'PRIORITY':
+                    self.process_list = self.schedul.sort_process_list_priority(self.process_list)
                 for process in self.process_list:
                     self.processor.add_process(process)
                 self.processor.start()

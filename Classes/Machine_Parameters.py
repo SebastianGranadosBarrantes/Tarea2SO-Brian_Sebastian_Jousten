@@ -92,8 +92,11 @@ class MachineParameters:
     def get_secondary_memory_pages(self):
         return self.secondary_memory.memory
 
-    def update_remaining_memory(self, memory):
-        self.remain_memory += memory
+    def update_remaining_memory(self, memory,rest):
+        num = math.ceil(memory/self.pages_size)
+        if rest:
+            num = -num
+        self.remain_memory += self.pages_size * num
 
     def get_remaining_memory(self):
         return self.remain_memory

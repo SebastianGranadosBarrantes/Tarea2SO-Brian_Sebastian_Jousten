@@ -23,7 +23,7 @@ class Ui_MainWindow(object):
 "}\n"
 "\n"
 "QLineEdit{\n"
-"     background-color: rgb(255, 255, 255);\n"
+"     background-color: rgb(128, 128, 128);\n"
 "}\n"
 "\n"
 "QComboBox{\n"
@@ -334,8 +334,8 @@ class Ui_MainWindow(object):
         self.label_13.setText(_translate("MainWindow", "Define Algorithm"))
         self.cmbSelectAlgorithm.setItemText(0, _translate("MainWindow", "FIFO"))
         self.cmbSelectAlgorithm.setItemText(1, _translate("MainWindow", "SJF"))
-        self.cmbSelectAlgorithm.setItemText(2, _translate("MainWindow", "tercero"))
-        self.cmbSelectAlgorithm.setItemText(3, _translate("MainWindow", "cuarto"))
+        self.cmbSelectAlgorithm.setItemText(2, _translate("MainWindow", "HRRN"))
+        self.cmbSelectAlgorithm.setItemText(2, _translate("MainWindow", "PRIORITY"))
         self.btnLauch.setText(_translate("MainWindow", "Lauch"))
 
 
