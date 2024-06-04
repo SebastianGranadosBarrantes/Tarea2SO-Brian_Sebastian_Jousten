@@ -81,7 +81,6 @@ class MainWindow(QMainWindow):
                 QMessageBox.critical(self, 'Error','Could not reserve memory space for the process, the process cannot be created')
                 return
             self.machine_parameters.update_remaining_memory(int(process_size),True)
-            self.schedul.add_process(new_process)
             self.process_list.append(new_process)
             self.process_id.append(new_process_id)
             self.update_process_table()
@@ -244,7 +243,6 @@ class MainWindow(QMainWindow):
     def remove_process_from_tables(self, process):
         try:
             self.process_list.remove(process)
-            self.schedul.delete_process(process)
             self.machine_parameters.update_remaining_memory(process.get_size(),False)
             self.machine_parameters.remove_memory_from_process(process)
             self.init_seMemory_table()
@@ -292,9 +290,9 @@ class MainWindow(QMainWindow):
                 elif self.algorithm == 'HRRN':
                     self.schedul.sort_process_list_hrrn(self.process_list)
                 elif self.algorithm == 'FIFO':
-                    self.process_list = self.schedul.get_processes_fifo()
+                    self.schedul.get_processes_fifo(self.process_list)
                 elif self.algorithm == 'PRIORITY':
-                    self.process_list = self.schedul.sort_process_list_priority(self.process_list)
+                    self.schedul.sort_process_list_priority(self.process_list)
                 for process in self.process_list:
                     self.processor.add_process(process)
                 self.processor.start()
