@@ -13,6 +13,10 @@ class Memory:
         self.define_memory()
 
     def define_memory(self):
+        """
+        Define memory for memory pages.
+        :return:
+        """
         pages_initial_position = 0
         for page in range(self.amount_pages):
             new_page = Page(pages_initial_position, (pages_initial_position + self.pages_size) - 1, page)
@@ -22,6 +26,12 @@ class Memory:
             self.unused_pages_id.append(page + 1)
 
     def add_process_to_memory(self, process_id, process_name):
+        """
+        Add process to memory.
+        :param process_id:
+        :param process_name:
+        :return:
+        """
         if len(self.available_pages) >= 1:
             page = self.available_pages.pop(0) # The list of available pages most be ordered
             # self.available_pages.sort()
@@ -36,6 +46,11 @@ class Memory:
             return False
 
     def delete_process_in_memory(self, process_id):
+        """
+        Delete process from memory.
+        :param process_id:
+        :return:
+        """
         pages_to_remove = []
         for page in self.used_pages:
             if page.process_id == process_id:

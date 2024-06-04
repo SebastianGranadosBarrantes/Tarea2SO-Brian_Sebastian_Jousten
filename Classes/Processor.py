@@ -12,12 +12,14 @@ class Processor(QThread):
         self.cores = [None] * num_cores
         self.mutex = QMutex()
 
-
-
     def add_process(self, process):
         self.process_queue.put(process)
 
     def run(self):
+        """
+        Execute all the processes in queue
+        :return:
+        """
         while not self.process_queue.empty() or any(self.cores):
             #self.mutex.lock()
             for i in range(self.num_cores):
@@ -36,4 +38,3 @@ class Processor(QThread):
         print('Capturando signal')
         print(process_id)
         self.process_finished.emit(process_id)
-

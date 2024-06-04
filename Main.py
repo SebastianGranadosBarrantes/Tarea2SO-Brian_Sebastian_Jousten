@@ -27,8 +27,11 @@ class MainWindow(QMainWindow):
         self.schedul = Scheduler()
         self.selected_process = None
 
-    #actualizar tabla luego de hacer ordenamiento
     def updateTblPrcs(self):
+        """
+        Update table after sorting
+        :return:
+        """
         try:
             self.ui.tbwProcess.setRowCount(len(self.process_list))
             for i in range(len(self.process_list)):
@@ -42,6 +45,7 @@ class MainWindow(QMainWindow):
             print(e)
 
     def handler_create_proces_service(self):
+
         process_size = self.ui.tfProcessSize.text()
         process_name = self.ui.tfProcessName.text()
         new_process_type = self.ui.cmbType.currentText()
@@ -58,6 +62,13 @@ class MainWindow(QMainWindow):
             self.create_proces_service(new_process_type, process_name, process_size)
 
     def create_proces_service(self, new_process_type, process_name, process_size):
+        """
+        Create a process/service
+        :param new_process_type:
+        :param process_name:
+        :param process_size:
+        :return:
+        """
         try:
             new_process_id = self.find_avaliable_id()
             new_process_priority = self.get_random_priority()
@@ -68,9 +79,7 @@ class MainWindow(QMainWindow):
             else:
                 QMessageBox.critical(self, 'Error','Could not reserve memory space for the process, the process cannot be created')
                 return
-            print(self.machine_parameters.get_remaining_memory())
             self.machine_parameters.update_remaining_memory(process_size,True)
-            print(self.machine_parameters.get_remaining_memory())
 
             self.schedul.add_process(new_process)
             self.process_list.append(new_process)
@@ -82,6 +91,10 @@ class MainWindow(QMainWindow):
             print(e)
 
     def create_random_proc(self):
+        """
+        Create a random process/service
+        :return:
+        """
         try:
             if self.machine_parameters is None:
                 QMessageBox.critical(self, 'Error', 'The machine parameters most be initialize')
@@ -94,15 +107,16 @@ class MainWindow(QMainWindow):
         except Exception as e:
             print(e)
 
-
-
     def verify_pow2(self, number):
         if number <= 0:
             return False
         return (number & (number - 1)) == 0
 
-
     def define_machine(self):
+        """
+        Define a machine parameter
+        :return:
+        """
         principal_memory_size = self.ui.tfPrincipalMemorySize.text()
         secondary_memory_size = self.ui.tfSecondaryMemorySize.text()
         pages_size = self.ui.tfPagesSize.text()
@@ -127,7 +141,11 @@ class MainWindow(QMainWindow):
             except ValueError:
                 print('error while managing the class machine_parameters')
 
-    def update_process_table(self): # insert process in the table
+    def update_process_table(self):
+        """
+        Insert a process in the table processes
+        :return:
+        """
         process = self.process_list[-1]
         actual_row = self.ui.tbwProcess.rowCount()
         self.ui.tbwProcess.insertRow(actual_row)
@@ -146,6 +164,7 @@ class MainWindow(QMainWindow):
             item = self.ui.tbwProcess.item(selected_process, 0)
             if item:
                 self.selected_process = self.find_process_per_id(item.text())
+
     def init_prMemory_table(self):
         self.ui.tbwPrimaryMemory.clearContents()
         self.ui.tbwPrimaryMemory.setRowCount(0)
@@ -225,9 +244,7 @@ class MainWindow(QMainWindow):
         try:
             self.process_list.remove(process)
             self.schedul.delete_process(process)
-            print(self.machine_parameters.get_remaining_memory())
             self.machine_parameters.update_remaining_memory(process.get_size(),False)
-            print(self.machine_parameters.get_remaining_memory())
             self.machine_parameters.remove_memory_from_process(process)
             self.init_seMemory_table()
             self.init_prMemory_table()
@@ -256,6 +273,10 @@ class MainWindow(QMainWindow):
                 self.selected_process = None
 
     def handle_launch(self):
+        """
+        Launch sorting and initialize cores with processes
+        :return:
+        """
         if not self.machine_parameters or self.machine_parameters.secondary_memory_size == 0:
             QMessageBox.critical(self, 'Error', 'Before launching the program is necessary to set the machine parameters')
         elif len(self.process_list) == 0:
