@@ -13,20 +13,23 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(1353, 652)
-        MainWindow.setStyleSheet("\n"
-"QWidget {\n"
+        MainWindow.setStyleSheet("QWidget {\n"
 "    background-color: #000000;\n"
 "}\n"
 "\n"
 "QLabel{\n"
-"    color:white;\n"
+"    color: white;\n"
 "}\n"
 "\n"
 "QLineEdit{\n"
-"     background-color: rgb(128, 128, 128);\n"
+"    background-color: rgb(255, 255, 255);\n"
 "}\n"
 "\n"
 "QComboBox{\n"
+"    background-color: rgb(255, 255, 255);\n"
+"}\n"
+"\n"
+"QComboBox QAbstractItemView {\n"
 "    background-color: rgb(255, 255, 255);\n"
 "}\n"
 "\n"
@@ -71,8 +74,7 @@ class Ui_MainWindow(object):
 "\n"
 "QTableWidget::item:focus {\n"
 "    outline: none;  /* Eliminar el borde por defecto al enfocarse en una celda */\n"
-"}\n"
-"")
+"}")
         self.centralwidget = QtWidgets.QWidget(parent=MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayoutWidget = QtWidgets.QWidget(parent=self.centralwidget)
@@ -334,8 +336,8 @@ class Ui_MainWindow(object):
         self.label_13.setText(_translate("MainWindow", "Define Algorithm"))
         self.cmbSelectAlgorithm.setItemText(0, _translate("MainWindow", "FIFO"))
         self.cmbSelectAlgorithm.setItemText(1, _translate("MainWindow", "SJF"))
-        self.cmbSelectAlgorithm.setItemText(2, _translate("MainWindow", "HRRN"))
-        self.cmbSelectAlgorithm.setItemText(2, _translate("MainWindow", "PRIORITY"))
+        self.cmbSelectAlgorithm.setItemText(2, _translate("MainWindow", "tercero"))
+        self.cmbSelectAlgorithm.setItemText(3, _translate("MainWindow", "cuarto"))
         self.btnLauch.setText(_translate("MainWindow", "Lauch"))
 
 

@@ -74,13 +74,13 @@ class MainWindow(QMainWindow):
             new_process_priority = self.get_random_priority()
             new_process_execution_time = self.get_random_execution_time()
             new_process = Process(new_process_id, process_name, process_size, new_process_execution_time, new_process_priority, new_process_type)
+
             if self.machine_parameters.assign_memory_to_process(new_process):
                 QMessageBox.about(self, 'Success', 'process created successfully')
             else:
                 QMessageBox.critical(self, 'Error','Could not reserve memory space for the process, the process cannot be created')
                 return
-            self.machine_parameters.update_remaining_memory(process_size,True)
-
+            self.machine_parameters.update_remaining_memory(int(process_size),True)
             self.schedul.add_process(new_process)
             self.process_list.append(new_process)
             self.process_id.append(new_process_id)
@@ -237,6 +237,7 @@ class MainWindow(QMainWindow):
 
     def handle_process_finished(self, process_id):
         process = self.find_process_per_id(process_id)
+        print(process)
         self.remove_process_from_tables(process)
 
 

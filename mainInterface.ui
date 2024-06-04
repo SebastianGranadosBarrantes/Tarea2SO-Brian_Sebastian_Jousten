@@ -14,21 +14,24 @@
    <string>Process simulator</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">
-QWidget {
+   <string notr="true">QWidget {
     background-color: #000000;
 }
 
 QLabel{
-	color:white;
+	color: white;
 }
 
 QLineEdit{
-	 background-color: rgb(255, 255, 255);
+	background-color: rgb(255, 255, 255);
 }
 
 QComboBox{
 	background-color: rgb(255, 255, 255);
+}
+
+QComboBox QAbstractItemView {
+    background-color: rgb(255, 255, 255);
 }
 
 QPushButton {
@@ -72,8 +75,7 @@ QTableWidget QHeaderView::section {
 
 QTableWidget::item:focus {
     outline: none;  /* Eliminar el borde por defecto al enfocarse en una celda */
-}
-</string>
+}</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QWidget" name="verticalLayoutWidget">
@@ -454,12 +456,12 @@ QTableWidget::item:focus {
        </item>
        <item>
         <property name="text">
-         <string>tercero</string>
+         <string>Taza de respuesta mas alta</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>cuarto</string>
+         <string>Prioridad</string>
         </property>
        </item>
       </widget>
