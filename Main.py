@@ -42,8 +42,17 @@ class MainWindow(QMainWindow):
                 self.ui.tbwProcess.setItem(i, 3, QTableWidgetItem(str(self.process_list[i].processSize)))
                 self.ui.tbwProcess.setItem(i, 4, QTableWidgetItem(str(self.process_list[i].pageNumber)))
                 self.ui.tbwProcess.setItem(i, 5, QTableWidgetItem(self.process_list[i].state))
+                if (self.process_list[i].type == 'Service'):
+                    self.ui.tbwProcess.setItem(i, 6, QTableWidgetItem("Infinite"))
+                else:
+                    self.ui.tbwProcess.setItem(i, 6, QTableWidgetItem(str(self.process_list[i].finishTime - self.process_list[i].executionTime)))
         except Exception as e:
             print(e)
+
+    def update_remaining_time(self, process_id, remaining_time):
+        row = self.find_row_proccess_table_per_processId(process_id)
+        if row != -1:
+            self.ui.tbwProcess.setItem(row, 6, QTableWidgetItem(str(remaining_time)))
 
     def handler_create_proces_service(self):
 
@@ -75,7 +84,7 @@ class MainWindow(QMainWindow):
             new_process_priority = self.get_random_priority()
             new_process_execution_time = self.get_random_execution_time()
             new_process = Process(new_process_id, process_name, process_size, new_process_execution_time, new_process_priority, new_process_type)
-
+            new_process.remaining_time_signal.connect(self.update_remaining_time)
             if self.machine_parameters.assign_memory_to_process(new_process):
                 QMessageBox.about(self, 'Success', 'process created successfully')
             else:
@@ -155,8 +164,6 @@ class MainWindow(QMainWindow):
         self.ui.tbwProcess.setItem(actual_row, 3, QTableWidgetItem(str(process.processSize)))
         self.ui.tbwProcess.setItem(actual_row, 4, QTableWidgetItem(str(process.pageNumber)))
         self.ui.tbwProcess.setItem(actual_row, 5, QTableWidgetItem(process.state))
-        #self.ui.tbwProcess.setItem(actual_row, 5, QTableWidgetItem(str(process.pages_per_principal)))
-        #self.ui.tbwProcess.setItem(actual_row, 6, QTableWidgetItem(str(process.pages_per_secondary)))
 
     def get_process_from_table(self):
         selected_process = self.ui.tbwProcess.currentRow()
@@ -295,6 +302,7 @@ class MainWindow(QMainWindow):
                 elif self.algorithm == 'PRIORITY':
                     self.schedul.sort_process_list_priority(self.process_list)
                 for process in self.process_list:
+                    process.state = 'Execution'
                     self.processor.add_process(process)
                 self.processor.start()
                 self.updateTblPrcs()

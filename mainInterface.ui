@@ -335,12 +335,7 @@ QTableWidget::item:focus {
          </column>
          <column>
           <property name="text">
-           <string>Pg pr memo</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>Pg seco memo</string>
+           <string>Time Remaining</string>
           </property>
          </column>
         </widget>
