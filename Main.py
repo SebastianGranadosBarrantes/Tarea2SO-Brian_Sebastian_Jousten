@@ -367,7 +367,6 @@ class MainWindow(QMainWindow):
         self.init_seMemory_table()
     def handle_table_item_changed(self, item):
         if self.bandera is None:
-            print('PPPPPPPAAAAAAAASSSSSSSSSSSSSSSSOOOOOOOOOOOOO')
             row = item.row()
             column = item.column()
             process_id = int(self.ui.tbwProcess.item(row, 0).text())

@@ -47,7 +47,7 @@ class Process(QThread):
 
                 self.calculate_velocity()
                 print(f'Service {self.idProcess} ({self.processName}) in execution')
-                self.sleep(self.velocity)
+                self.msleep(self.velocity)
             self.process_finished.emit(self.idProcess)
 
     def find_memory_pages_secondary_memory(self, secondary_memory_id):
