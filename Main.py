@@ -270,8 +270,9 @@ class MainWindow(QMainWindow):
         if self.selected_process == -1 or self.selected_process is None:
             QMessageBox.critical(self, 'Error', 'Before pause please select a process from the table by selected him')
         else:
-            if self.selected_process.state == 'Execution':
-                self.selected_process.state = 'Await'
+            if not self.selected_process.is_waiting:
+                self.selected_process.set_start_time()
+                self.selected_process.set_is_waiting(True)
                 self.updateTblPrcs()
             else:
                 QMessageBox.warning(self, 'Warning', 'Process already paused')
@@ -293,6 +294,9 @@ class MainWindow(QMainWindow):
             QMessageBox.critical(self, 'Error', 'Before launching the program is necessary to set minimum one process')
         else:
             try:
+                for process in self.process_list:
+                    if process.is_waiting:
+                        process.update_time()
                 self.processor = Processor(4)
                 self.algorithm = self.ui.cmbSelectAlgorithm.currentText()
                 self.processor.process_finished.connect(self.handle_process_finished)
@@ -334,11 +338,8 @@ class MainWindow(QMainWindow):
         page_secondary_memory.swap_page(page_primary_memory.memory_id, page_primary_memory.execution_page_number, page_primary_memory.process_name, page_primary_memory.process_id)
         page_primary_memory.swap_page(aux_page.memory_id, aux_page.execution_page_number, aux_page.process_name, aux_page.process_id)
 
-
-
         self.init_prMemory_table()
         self.init_seMemory_table()
-
 
     def get_random_priority(self):
         return random.randint(1, 20)

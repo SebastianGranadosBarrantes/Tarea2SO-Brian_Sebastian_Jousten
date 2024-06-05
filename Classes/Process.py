@@ -1,6 +1,6 @@
 import time
 from PyQt6.QtCore import QThread, QMutex, pyqtSignal
-
+import threading
 
 class Process(QThread):
     process_finished = pyqtSignal(int)
@@ -21,16 +21,20 @@ class Process(QThread):
         self.type = type
         self.service_running = True
 
+        self.startTime = time.time()
+        self.is_waiting = True
+
     def run(self):
         print(self.type)
         if self.type == 'Process':
             print(f'Process {self.idProcess} ({self.processName}) started with finish time {self.finishTime}')
             while self.executionTime < self.finishTime:
-                self.sleep(1)
-                self.executionTime += 1
-                remaining_time = self.finishTime - self.executionTime
-                print(f'Process {self.idProcess} ({self.processName}) executing, time left: {self.finishTime - self.executionTime}')
-                self.remaining_time_signal.emit(self.idProcess, remaining_time)
+                if not self.is_waiting:
+                    self.sleep(1)
+                    self.executionTime += 1
+                    remaining_time = self.finishTime - self.executionTime
+                    print(f'Process {self.idProcess} ({self.processName}) executing, time left: {self.finishTime - self.executionTime}')
+                    self.remaining_time_signal.emit(self.idProcess, remaining_time)
             self.process_finished.emit(self.idProcess)
             print(f'Process {self.idProcess} ({self.processName}) finished')
         else:
@@ -49,6 +53,13 @@ class Process(QThread):
             return True
         return False
 
+    def update_time(self):
+        self.awaitingTime += time.time() - self.startTime
+
+    def set_start_time(self):
+        self.startTime = time.time()
+
+
     def __str__(self):
         return (f"Process(idProcess={self.idProcess}, "
                 f"awaitingTime={self.awaitingTime}, "
@@ -60,6 +71,9 @@ class Process(QThread):
                 f"pageNumber={self.pageNumber}, "
                 f"state={self.state}, "
                 f"processSize={self.processSize})")
+
+    def set_is_waiting(self, is_waiting):
+        self.is_waiting = is_waiting
 
     def get_size(self):
         return self.processSize

@@ -28,6 +28,7 @@ class Processor(QThread):
                 if self.cores[i] is None or not self.cores[i].isRunning():
                     if not self.process_queue.empty():
                         process = self.process_queue.get()
+                        process.set_is_waiting(False)
                         if process.find_memory_pages_secondary_memory(1):
                             self.necessary_swap.emit(process.idProcess)
                             # continue

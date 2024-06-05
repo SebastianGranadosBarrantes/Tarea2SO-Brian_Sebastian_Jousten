@@ -18,7 +18,7 @@ class Scheduler:
         :param process_list:
         :return:
         """
-        process_list.sort(key=lambda x: (x.type == "Process", -((x.awaitingTime + x.executionTime) / x.executionTime)))
+        process_list.sort(key=lambda x: (x.type == "Process", -((x.awaitingTime + x.finishTime) / x.finishTime)))
 
     #FIFO
     def get_processes_fifo(self, process_list):
