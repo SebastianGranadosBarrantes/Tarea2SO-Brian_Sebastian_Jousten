@@ -50,8 +50,7 @@ class MachineParameters:
                     print(f'Error while adding process page number {i + 1}')
                     return False
 
-        elif len(self.primary_memory.available_pages) < necessary_pages and len(
-                self.primary_memory.available_pages) != 0:
+        elif len(self.primary_memory.available_pages) < necessary_pages and necessary_pages - len(self.primary_memory.available_pages) <= len(self.secondary_memory.available_pages):
             print(
                 'not all the process can be charged in the principal memory, the process will charged in both memories')
             principal_memory_pages = len(self.primary_memory.available_pages)

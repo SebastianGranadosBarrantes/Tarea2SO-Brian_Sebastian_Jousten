@@ -23,6 +23,7 @@ class Process(QThread):
         self.startTime = time.time()
         self.is_waiting = True
         self.first_iteration = True
+        self.velocity = 1
         self.remaining_time = 0
 
     def run(self):
@@ -31,11 +32,12 @@ class Process(QThread):
             print(f'Process {self.idProcess} ({self.processName}) started with finish time {self.finishTime}')
             while self.executionTime < self.finishTime:
                 if not self.is_waiting:
-                    self.sleep(1)
                     self.executionTime += 1
                     self.remaining_time = self.finishTime - self.executionTime
+                    self.calculate_velocity()
                     print(f'Process {self.idProcess} ({self.processName}) executing, time left: {self.finishTime - self.executionTime}')
                     self.remaining_time_signal.emit(self.idProcess)
+                    self.msleep(self.velocity)
             self.process_finished.emit(self.idProcess)
             print(f'Process {self.idProcess} ({self.processName}) finished')
         else:
@@ -62,6 +64,14 @@ class Process(QThread):
 
     def set_start_time(self):
         self.startTime = time.time()
+
+    def calculate_velocity(self):
+        for page in self.pages_table:
+            if page.memory_id == 1:
+                self.velocity = 1500
+                return
+        self.velocity = 1000
+        return
 
 
     def __str__(self):
