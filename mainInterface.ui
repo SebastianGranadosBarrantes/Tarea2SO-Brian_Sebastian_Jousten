@@ -106,7 +106,11 @@ QTableWidget::item:focus {
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="tfPrincipalMemorySize"/>
+      <widget class="QLineEdit" name="tfPrincipalMemorySize">
+       <property name="text">
+        <string>4096</string>
+       </property>
+      </widget>
      </item>
      <item>
       <widget class="QLabel" name="label_2">
@@ -116,7 +120,11 @@ QTableWidget::item:focus {
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="tfSecondaryMemorySize"/>
+      <widget class="QLineEdit" name="tfSecondaryMemorySize">
+       <property name="text">
+        <string>2048</string>
+       </property>
+      </widget>
      </item>
      <item>
       <widget class="QLabel" name="label_3">
@@ -126,7 +134,11 @@ QTableWidget::item:focus {
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="tfPagesSize"/>
+      <widget class="QLineEdit" name="tfPagesSize">
+       <property name="text">
+        <string>1024</string>
+       </property>
+      </widget>
      </item>
      <item>
       <widget class="QLabel" name="label_16">
@@ -175,7 +187,11 @@ QTableWidget::item:focus {
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="tfProcessName"/>
+      <widget class="QLineEdit" name="tfProcessName">
+       <property name="text">
+        <string>proc1</string>
+       </property>
+      </widget>
      </item>
      <item>
       <widget class="QLabel" name="label_7">
@@ -185,7 +201,11 @@ QTableWidget::item:focus {
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="tfProcessSize"/>
+      <widget class="QLineEdit" name="tfProcessSize">
+       <property name="text">
+        <string>2048</string>
+       </property>
+      </widget>
      </item>
      <item>
       <widget class="QLabel" name="label_10">
@@ -430,7 +450,7 @@ QTableWidget::item:focus {
      <rect>
       <x>570</x>
       <y>0</y>
-      <width>160</width>
+      <width>170</width>
       <height>80</height>
      </rect>
     </property>

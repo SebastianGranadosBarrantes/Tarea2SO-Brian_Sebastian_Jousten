@@ -5,6 +5,7 @@ from PyQt6.QtCore import QThread, QMutex, pyqtSignal
 
 class Processor(QThread):
     process_finished = pyqtSignal(int)
+    necessary_swap = pyqtSignal(int)
     def __init__(self, num_cores):
         super().__init__()
         self.num_cores = num_cores
@@ -26,6 +27,9 @@ class Processor(QThread):
                 if self.cores[i] is None or not self.cores[i].isRunning():
                     if not self.process_queue.empty():
                         process = self.process_queue.get()
+                        if process.find_memory_pages_secondary_memory(1):
+                            self.necessary_swap.emit(process.idProcess)
+                            continue
                         self.cores[i] = process
                         self.cores[i].state = 'Execution'
                         self.cores[i].process_finished.connect(self.on_process_finished)

@@ -37,6 +37,18 @@ class Process(QThread):
                 print(f'Service {self.idProcess} ({self.processName}) in execution')
                 self.sleep(1)
 
+
+    def find_memory_pages_secondary_memory(self, secondary_memory_id):
+        print(f'the pages_table list size is {len(self.pages_table)}')
+        counter = 0
+        for page in self.pages_table:
+            if page.memory_id == secondary_memory_id:
+                counter += 1
+
+        if counter == len(self.pages_table):
+            return True
+        return False
+
     def __str__(self):
         return (f"Process(idProcess={self.idProcess}, "
                 f"awaitingTime={self.awaitingTime}, "

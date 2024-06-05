@@ -5,6 +5,7 @@ from PyQt6.QtWidgets import QApplication, QMainWindow, QMessageBox, QTableWidget
 from Classes.Processor import Processor
 from mainInterface import Ui_MainWindow
 from Classes.Scheduler import Scheduler
+from Classes.Pages import Page
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -80,8 +81,8 @@ class MainWindow(QMainWindow):
             else:
                 QMessageBox.critical(self, 'Error','Could not reserve memory space for the process, the process cannot be created')
                 return
-            self.machine_parameters.update_remaining_memory(int(process_size),True)
-            self.schedul.add_process(new_process)
+            self.machine_parameters.update_remaining_memory(int(process_size), True)
+            self.schedul.processes.append(new_process)
             self.process_list.append(new_process)
             self.process_id.append(new_process_id)
             self.update_process_table()
@@ -237,15 +238,14 @@ class MainWindow(QMainWindow):
 
     def handle_process_finished(self, process_id):
         process = self.find_process_per_id(process_id)
-        print(process)
         self.remove_process_from_tables(process)
 
 
     def remove_process_from_tables(self, process):
         try:
             self.process_list.remove(process)
-            self.schedul.delete_process(process)
-            self.machine_parameters.update_remaining_memory(process.get_size(),False)
+            #self.schedul.delete_process(process)
+            self.machine_parameters.update_remaining_memory(process.get_size(), False)
             self.machine_parameters.remove_memory_from_process(process)
             self.init_seMemory_table()
             self.init_prMemory_table()
@@ -287,6 +287,7 @@ class MainWindow(QMainWindow):
                 self.processor = Processor(4)
                 self.algorithm = self.ui.cmbSelectAlgorithm.currentText()
                 self.processor.process_finished.connect(self.handle_process_finished)
+                self.processor.necessary_swap.connect(self.handle_swap)
                 if self.algorithm == 'SJF':
                     self.schedul.sort_process_list_sjf(self.process_list)
                 elif self.algorithm == 'HRRN':
@@ -302,12 +303,44 @@ class MainWindow(QMainWindow):
             except Exception as e:
                 print(e)
 
+    def handle_swap(self, process):
+        process = self.find_process_per_id(process)
+        page_secondary_memory = None
+        print(f'el tamanno de la lista de paginas es {len(process.pages_table)}')
+        for page in process.pages_table:
+            if page.memory_id == self.machine_parameters.secondary_memory.memory_id:
+                page_secondary_memory = page
+                break
+        if page_secondary_memory is None:
+            print('no se encontro la página')
+            return
+        aux_page = Page(page_secondary_memory.initial_position, page_secondary_memory.final_position, page_secondary_memory.page_number, page_secondary_memory.memory_id)
+        aux_page.set_process(page_secondary_memory.process_id, page_secondary_memory.process_name, page_secondary_memory.execution_page_number, page_secondary_memory.memory_id)
+        print(f'Este es el aux page despues de crearlo {aux_page}')
+        page_primary_memory = self.machine_parameters.primary_memory.get_page_for_swap()
+        if page_primary_memory == -1:
+            QMessageBox.critical(self, 'Error', 'There is a deadlock situation, is possible that is caused because the processor is busy with services, please kill one')
+            return
+        page_secondary_memory.swap_page(page_primary_memory.memory_id, page_primary_memory.execution_page_number, page_primary_memory.process_name, page_primary_memory.process_id)
+        page_primary_memory.swap_page(aux_page.memory_id, aux_page.execution_page_number, aux_page.process_name, aux_page.process_id)
+
+
+
+        self.init_prMemory_table()
+        self.init_seMemory_table()
+
+
     def get_random_priority(self):
         return random.randint(1, 20)
 
     def get_random_execution_time(self):
         return random.randint(30, 120)
 
+    def get_process_per_id(self, process_id):
+        for process in self.process_list:
+            if process.idProcess == process_id:
+                return process
+        return None
     def find_avaliable_id(self):
         find = False
         counter = 0

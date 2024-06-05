@@ -9,8 +9,8 @@ class MachineParameters:
         self.pages_size = pages_size
         self.pages_per_primary_memory = self.calculate_pages_per_pmemory()
         self.pages_per_secondary_memory = self.calculate_pages_per_smemory()
-        self.primary_memory = Memory(self.primary_memory_size, self.pages_per_primary_memory, pages_size)
-        self.secondary_memory = Memory(self.secondary_memory_size, self.pages_per_secondary_memory, pages_size)
+        self.primary_memory = Memory(self.primary_memory_size, self.pages_per_primary_memory, pages_size, 0)
+        self.secondary_memory = Memory(self.secondary_memory_size, self.pages_per_secondary_memory, pages_size, 1)
         self.remain_memory = primary_memory + secondary_memory
 
     def calculate_pages_per_pmemory(self):
@@ -42,7 +42,7 @@ class MachineParameters:
         if len(self.primary_memory.available_pages) >= necessary_pages:
             print('all the process can be charged in the principal memory')
             for i in range(necessary_pages):
-                saved1 = self.primary_memory.add_process_to_memory(process.idProcess, process.processName)
+                saved1 = self.primary_memory.add_process_to_memory(process.idProcess, process.processName, process.type)
                 if saved1:
                     process.pages_table.append(saved1)
                     print(f'Process page number {i + 1} has been added to memory {saved1}')
@@ -57,7 +57,7 @@ class MachineParameters:
             principal_memory_pages = len(self.primary_memory.available_pages)
             for i in range(necessary_pages):
                 if i < principal_memory_pages:
-                    saved1 = self.primary_memory.add_process_to_memory(process.idProcess, process.processName)
+                    saved1 = self.primary_memory.add_process_to_memory(process.idProcess, process.processName, process.type)
                     if saved1:
                         process.pages_table.append(saved1)
                         print(f'Process page number {i + 1} has been added to memory {saved1}')
@@ -65,7 +65,7 @@ class MachineParameters:
                         print(f'Error while adding process page number {i + 1}')
                         return False
                 else:
-                    saved2 = self.secondary_memory.add_process_to_memory(process.idProcess, process.processName)
+                    saved2 = self.secondary_memory.add_process_to_memory(process.idProcess, process.processName, process.type)
                     if saved2:
                         process.pages_table.append(saved2)
                         print(f'Process page number {i + 1} has been added to memory {saved2}')
@@ -76,7 +76,7 @@ class MachineParameters:
             print(
                 'all the process will be charged on the secondary memory, because there is no space in the principal memory')
             for i in range(necessary_pages):
-                saved2 = self.secondary_memory.add_process_to_memory(process.idProcess, process.processName)
+                saved2 = self.secondary_memory.add_process_to_memory(process.idProcess, process.processName, process.type)
                 if saved2:
                     process.pages_table.append(saved2)
                     print(f'Process page number {i + 1} has been added to memory {saved2}')
@@ -88,11 +88,6 @@ class MachineParameters:
         return True
 
     def remove_memory_from_process(self, process):
-        """
-        Removes process from memory.
-        :param process:
-        :return:
-        """
         self.primary_memory.delete_process_in_memory(process.idProcess)
         self.secondary_memory.delete_process_in_memory(process.idProcess)
 

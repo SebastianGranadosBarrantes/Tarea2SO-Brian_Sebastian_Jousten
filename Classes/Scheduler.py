@@ -50,6 +50,7 @@ class Scheduler:
         self.processes.append(process)
 
     def delete_process(self, process):
+        print(f'Esta es la lista \n {self.processes}')
         """
         Delete process from process_list
         :param process:
