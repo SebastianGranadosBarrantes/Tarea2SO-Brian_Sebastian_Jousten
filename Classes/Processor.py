@@ -30,7 +30,7 @@ class Processor(QThread):
                         process = self.process_queue.get()
                         if process.find_memory_pages_secondary_memory(1):
                             self.necessary_swap.emit(process.idProcess)
-                            continue
+                            # continue
                         self.cores[i] = process
                         self.cores[i].state = 'Execution'
                         self.cores[i].process_finished.connect(self.on_process_finished)

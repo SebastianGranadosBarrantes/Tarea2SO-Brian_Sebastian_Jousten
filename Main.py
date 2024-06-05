@@ -51,7 +51,9 @@ class MainWindow(QMainWindow):
 
     def update_remaining_time(self, process_id, remaining_time):
         row = self.find_row_proccess_table_per_processId(process_id)
+        process = self.find_process_per_id(process_id)
         if row != -1 and row is not None:
+            self.ui.tbwProcess.setItem(row, 5, QTableWidgetItem(process.state))
             self.ui.tbwProcess.setItem(row, 6, QTableWidgetItem(str(remaining_time)))
 
     def handler_create_proces_service(self):
@@ -304,7 +306,7 @@ class MainWindow(QMainWindow):
                 elif self.algorithm == 'PRIORITY':
                     self.schedul.sort_process_list_priority(self.process_list)
                 for process in self.process_list:
-                    process.state = 'Execution'
+                    # process.state = 'Execution'
                     self.processor.add_process(process)
                 self.processor.start()
                 self.updateTblPrcs()
