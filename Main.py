@@ -287,12 +287,14 @@ class MainWindow(QMainWindow):
         if self.selected_process == -1 or self.selected_process is None:
             QMessageBox.critical(self, 'Error', 'Before pause please select a process from the table by selected him')
         else:
-            if not self.selected_process.is_waiting:
+            if not self.selected_process.is_waiting and self.selected_process.state == "Execution":
                 self.selected_process.set_start_time()
                 self.selected_process.set_is_waiting(True)
                 self.updateTblPrcs()
+            elif self.selected_process.state == "Await":
+                QMessageBox.warning(self, 'Warning', 'Process must be initiated')
             else:
-                QMessageBox.warning(self, 'Warning', 'Process already paused')
+                self.selected_process.set_is_waiting(False)
     def handle_resume_process(self):
             if self.selected_process == -1 or self.selected_process is None:
                 QMessageBox.critical(self, 'Error', 'Before resume please select a process from the table by selected him')

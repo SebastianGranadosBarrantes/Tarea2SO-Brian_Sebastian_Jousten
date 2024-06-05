@@ -29,6 +29,7 @@ class Processor(QThread):
                     if not self.process_queue.empty():
                         process = self.process_queue.get()
                         process.set_is_waiting(False)
+                        process.state = 'Execution'
                         if process.find_memory_pages_secondary_memory(1):
                             self.necessary_swap.emit(process.idProcess)
                         self.cores[i] = process
