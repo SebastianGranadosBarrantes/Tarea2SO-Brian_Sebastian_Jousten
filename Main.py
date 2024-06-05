@@ -21,11 +21,13 @@ class MainWindow(QMainWindow):
             self.ui.tbwProcess.itemSelectionChanged.connect(self.get_process_from_table)
             self.ui.btnPause.clicked.connect(self.handle_pause_process)
             self.ui.btnDone.clicked.connect(self.handle_resume_process)
+
         else:
             self.ui.tbwPrimaryMemory.clearContents()
             self.ui.tbwPrimaryMemory.setRowCount(0)
             self.ui.tbwSecondaryMemory.clearContents()
             self.ui.tbwSecondaryMemory.setRowCount(0)
+            self.running = False
 
         self.algorithm = ''
         self.process_list = []
@@ -305,10 +307,13 @@ class MainWindow(QMainWindow):
         """
         if not self.machine_parameters or self.machine_parameters.secondary_memory_size == 0:
             QMessageBox.critical(self, 'Error', 'Before launching the program is necessary to set the machine parameters')
+            return
         elif len(self.process_list) == 0:
             QMessageBox.critical(self, 'Error', 'Before launching the program is necessary to set minimum one process')
+            return
         elif self.running:
             QMessageBox.critical(self, 'Error', 'The program is all ready running')
+            return
 
         else:
             try:
