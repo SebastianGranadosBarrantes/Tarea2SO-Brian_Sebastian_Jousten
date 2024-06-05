@@ -12,7 +12,7 @@ from PyQt6 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1353, 652)
+        MainWindow.resize(1037, 652)
         MainWindow.setStyleSheet("QWidget {\n"
 "    background-color: #000000;\n"
 "}\n"
@@ -221,7 +221,7 @@ class Ui_MainWindow(object):
         self.tbwPrimaryMemory.setHorizontalHeaderItem(4, item)
         self.verticalLayout_4.addWidget(self.tbwPrimaryMemory)
         self.verticalLayoutWidget_6 = QtWidgets.QWidget(parent=self.centralwidget)
-        self.verticalLayoutWidget_6.setGeometry(QtCore.QRect(520, 410, 461, 191))
+        self.verticalLayoutWidget_6.setGeometry(QtCore.QRect(520, 410, 501, 191))
         self.verticalLayoutWidget_6.setObjectName("verticalLayoutWidget_6")
         self.verticalLayout_5 = QtWidgets.QVBoxLayout(self.verticalLayoutWidget_6)
         self.verticalLayout_5.setContentsMargins(0, 0, 0, 0)
@@ -274,7 +274,7 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Process simulator"))
-        self.label_4.setText(_translate("MainWindow", "Machine parameters:"))
+        self.label_4.setText(_translate("MainWindow", "Machine parameters(Mbs):"))
         self.label.setText(_translate("MainWindow", "Principal Memory"))
         self.tfPrincipalMemorySize.setText(_translate("MainWindow", "4096"))
         self.label_2.setText(_translate("MainWindow", "Secondary Memory"))

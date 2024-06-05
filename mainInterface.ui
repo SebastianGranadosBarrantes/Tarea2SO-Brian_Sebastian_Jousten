@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1353</width>
+    <width>1037</width>
     <height>652</height>
    </rect>
   </property>
@@ -91,7 +91,7 @@ QTableWidget::item:focus {
      <item>
       <widget class="QLabel" name="label_4">
        <property name="text">
-        <string>Machine parameters:</string>
+        <string>Machine parameters(Mbs):</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignCenter</set>
@@ -397,7 +397,7 @@ QTableWidget::item:focus {
      <rect>
       <x>520</x>
       <y>410</y>
-      <width>461</width>
+      <width>501</width>
       <height>191</height>
      </rect>
     </property>

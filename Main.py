@@ -8,10 +8,18 @@ from Classes.Scheduler import Scheduler
 from Classes.Pages import Page
 
 class MainWindow(QMainWindow):
+    running = False
     def __init__(self):
         super().__init__()
-        self.ui = Ui_MainWindow()
-        self.ui.setupUi(self)
+        if not self.running:
+            self.ui = Ui_MainWindow()
+            self.ui.setupUi(self)
+        else:
+            self.ui.tbwPrimaryMemory.clearContents()
+            self.ui.tbwPrimaryMemory.setRowCount(0)
+            self.ui.tbwSecondaryMemory.clearContents()
+            self.ui.tbwSecondaryMemory.setRowCount(0)
+
         self.algorithm = ''
         self.process_list = []
         self.machine_parameters = None
@@ -19,7 +27,6 @@ class MainWindow(QMainWindow):
         self.ui.btnCreateProccess.clicked.connect(self.handler_create_proces_service)
         self.ui.btnSetParameters.clicked.connect(self.define_machine)
         self.ui.btnGenerateRandom.clicked.connect(self.create_random_proc)
-
         self.ui.btnLauch.clicked.connect(self.handle_launch)
         self.ui.tbwProcess.itemSelectionChanged.connect(self.get_process_from_table)
         self.ui.btnPause.clicked.connect(self.handle_pause_process)
@@ -49,12 +56,16 @@ class MainWindow(QMainWindow):
         except Exception as e:
             print(e)
 
-    def update_remaining_time(self, process_id, remaining_time):
+    def update_remaining_time(self, process_id):
         row = self.find_row_proccess_table_per_processId(process_id)
         process = self.find_process_per_id(process_id)
         if row != -1 and row is not None:
             self.ui.tbwProcess.setItem(row, 5, QTableWidgetItem(process.state))
-            self.ui.tbwProcess.setItem(row, 6, QTableWidgetItem(str(remaining_time)))
+            if process.type == 'Service' and process.first_iteration:
+                self.ui.tbwProcess.setItem(row, 6, QTableWidgetItem(str('Infinite')))
+                process.first_iteration = False
+            else:
+                self.ui.tbwProcess.setItem(row, 6, QTableWidgetItem(str(process.remaining_time)))
 
     def handler_create_proces_service(self):
 
@@ -94,6 +105,7 @@ class MainWindow(QMainWindow):
                 return
             self.machine_parameters.update_remaining_memory(int(process_size),True)
             self.process_list.append(new_process)
+            self.processor.add_process(new_process)
             self.process_id.append(new_process_id)
             self.update_process_table()
             self.init_prMemory_table()
@@ -145,6 +157,7 @@ class MainWindow(QMainWindow):
             QMessageBox.critical(self, 'Error', 'The principal pages size most be a power of 2 ')
         else:
             try:
+                self.processor = Processor(4)
                 self.machine_parameters = MachineParameters(int(principal_memory_size), int(secondary_memory_size), int(pages_size))
                 self.init_prMemory_table()
                 self.init_seMemory_table()
@@ -250,10 +263,12 @@ class MainWindow(QMainWindow):
         self.remove_process_from_tables(process)
         if all(p.executionTime >= p.finishTime for p in self.process_list):
             QMessageBox.about(self, 'Success', 'Execution Finished')
+            self.__init__()
 
     def remove_process_from_tables(self, process):
         try:
             self.process_list.remove(process)
+            self.process_id.remove(process.idProcess)
             self.machine_parameters.update_remaining_memory(process.get_size(),False)
             self.machine_parameters.remove_memory_from_process(process)
             self.init_seMemory_table()
@@ -292,12 +307,15 @@ class MainWindow(QMainWindow):
             QMessageBox.critical(self, 'Error', 'Before launching the program is necessary to set the machine parameters')
         elif len(self.process_list) == 0:
             QMessageBox.critical(self, 'Error', 'Before launching the program is necessary to set minimum one process')
+        elif self.running:
+            QMessageBox.critical(self, 'Error', 'The program is all ready running')
+
         else:
             try:
                 for process in self.process_list:
                     if process.is_waiting:
                         process.update_time()
-                self.processor = Processor(4)
+                self.running = True
                 self.algorithm = self.ui.cmbSelectAlgorithm.currentText()
                 self.processor.process_finished.connect(self.handle_process_finished)
                 self.processor.necessary_swap.connect(self.handle_swap)
@@ -309,9 +327,7 @@ class MainWindow(QMainWindow):
                     self.schedul.get_processes_fifo(self.process_list)
                 elif self.algorithm == 'PRIORITY':
                     self.schedul.sort_process_list_priority(self.process_list)
-                for process in self.process_list:
-                    # process.state = 'Execution'
-                    self.processor.add_process(process)
+
                 self.processor.start()
                 self.updateTblPrcs()
             except Exception as e:

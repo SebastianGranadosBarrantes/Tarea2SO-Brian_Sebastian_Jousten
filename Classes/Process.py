@@ -4,7 +4,7 @@ import threading
 
 class Process(QThread):
     process_finished = pyqtSignal(int)
-    remaining_time_signal = pyqtSignal(int, int)
+    remaining_time_signal = pyqtSignal(int)
     def __init__(self, idProcess, processName, processSize, finishTime, priority, type):
         super().__init__()
         self.idProcess = idProcess
@@ -20,9 +20,10 @@ class Process(QThread):
         self.pages_table = []
         self.type = type
         self.service_running = True
-
         self.startTime = time.time()
         self.is_waiting = True
+        self.first_iteration = True
+        self.remaining_time = 0
 
     def run(self):
         print(self.type)
@@ -32,15 +33,18 @@ class Process(QThread):
                 if not self.is_waiting:
                     self.sleep(1)
                     self.executionTime += 1
-                    remaining_time = self.finishTime - self.executionTime
+                    self.remaining_time = self.finishTime - self.executionTime
                     print(f'Process {self.idProcess} ({self.processName}) executing, time left: {self.finishTime - self.executionTime}')
-                    self.remaining_time_signal.emit(self.idProcess, remaining_time)
+                    self.remaining_time_signal.emit(self.idProcess)
             self.process_finished.emit(self.idProcess)
             print(f'Process {self.idProcess} ({self.processName}) finished')
         else:
             while self.service_running:
+                if self.first_iteration:
+                    self.remaining_time_signal.emit(self.idProcess)
                 print(f'Service {self.idProcess} ({self.processName}) in execution')
                 self.sleep(1)
+            self.process_finished.emit(self.idProcess)
 
     def find_memory_pages_secondary_memory(self, secondary_memory_id):
         print(f'the pages_table list size is {len(self.pages_table)}')
