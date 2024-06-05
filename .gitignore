@@ -1,0 +1,12 @@
+
+__pycache__/
+*.py[cod]
+*$py.class
+__pycache__/mainInterface.cpython-39.pyc
+Classes/__pycache__/Machine_Parameters.cpython-39.pyc
+Classes/__pycache__/Memory.cpython-39.pyc
+Classes/__pycache__/Memory.cpython-39.pyc
+Classes/__pycache__/Pages.cpython-39.pyc
+Classes/__pycache__/Process.cpython-39.pyc
+Classes/__pycache__/Processor.cpython-39.pyc
+Classes/__pycache__/Scheduler.cpython-39.pyc

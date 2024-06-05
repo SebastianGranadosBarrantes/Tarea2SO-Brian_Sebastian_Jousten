@@ -311,7 +311,7 @@ class Ui_MainWindow(object):
         item = self.tbwProcess.horizontalHeaderItem(5)
         item.setText(_translate("MainWindow", "State"))
         item = self.tbwProcess.horizontalHeaderItem(6)
-        item.setText(_translate("MainWindow", "Time Remaining"))
+        item.setText(_translate("MainWindow", "Time Remainig"))
         self.label_11.setText(_translate("MainWindow", "Principal Memory:"))
         item = self.tbwPrimaryMemory.horizontalHeaderItem(0)
         item.setText(_translate("MainWindow", "Address-Range"))
@@ -337,8 +337,8 @@ class Ui_MainWindow(object):
         self.label_13.setText(_translate("MainWindow", "Define Algorithm"))
         self.cmbSelectAlgorithm.setItemText(0, _translate("MainWindow", "FIFO"))
         self.cmbSelectAlgorithm.setItemText(1, _translate("MainWindow", "SJF"))
-        self.cmbSelectAlgorithm.setItemText(2, _translate("MainWindow", "Taza de respuesta mas alta"))
-        self.cmbSelectAlgorithm.setItemText(3, _translate("MainWindow", "Prioridad"))
+        self.cmbSelectAlgorithm.setItemText(2, _translate("MainWindow", "HRRN"))
+        self.cmbSelectAlgorithm.setItemText(3, _translate("MainWindow", "PRIORITY"))
         self.btnLauch.setText(_translate("MainWindow", "Lauch"))
 
 

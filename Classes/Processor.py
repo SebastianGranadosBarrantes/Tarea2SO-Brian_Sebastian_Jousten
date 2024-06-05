@@ -23,6 +23,7 @@ class Processor(QThread):
         """
         while not self.process_queue.empty() or any(self.cores):
             #self.mutex.lock()
+            process_in_secondary_memory = False
             for i in range(self.num_cores):
                 if self.cores[i] is None or not self.cores[i].isRunning():
                     if not self.process_queue.empty():

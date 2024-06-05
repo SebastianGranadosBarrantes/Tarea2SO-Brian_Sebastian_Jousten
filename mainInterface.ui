@@ -335,7 +335,7 @@ QTableWidget::item:focus {
          </column>
          <column>
           <property name="text">
-           <string>Time Remaining</string>
+           <string>Time Remainig</string>
           </property>
          </column>
         </widget>
@@ -471,12 +471,12 @@ QTableWidget::item:focus {
        </item>
        <item>
         <property name="text">
-         <string>Taza de respuesta mas alta</string>
+         <string>HRRN</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>Prioridad</string>
+         <string>PRIORITY</string>
         </property>
        </item>
       </widget>

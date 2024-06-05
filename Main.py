@@ -51,7 +51,7 @@ class MainWindow(QMainWindow):
 
     def update_remaining_time(self, process_id, remaining_time):
         row = self.find_row_proccess_table_per_processId(process_id)
-        if row != -1:
+        if row != -1 and row is not None:
             self.ui.tbwProcess.setItem(row, 6, QTableWidgetItem(str(remaining_time)))
 
     def handler_create_proces_service(self):
