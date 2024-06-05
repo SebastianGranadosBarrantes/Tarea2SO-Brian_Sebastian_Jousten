@@ -14,6 +14,13 @@ class MainWindow(QMainWindow):
         if not self.running:
             self.ui = Ui_MainWindow()
             self.ui.setupUi(self)
+            self.ui.btnCreateProccess.clicked.connect(self.handler_create_proces_service)
+            self.ui.btnSetParameters.clicked.connect(self.define_machine)
+            self.ui.btnGenerateRandom.clicked.connect(self.create_random_proc)
+            self.ui.btnLauch.clicked.connect(self.handle_launch)
+            self.ui.tbwProcess.itemSelectionChanged.connect(self.get_process_from_table)
+            self.ui.btnPause.clicked.connect(self.handle_pause_process)
+            self.ui.btnDone.clicked.connect(self.handle_resume_process)
         else:
             self.ui.tbwPrimaryMemory.clearContents()
             self.ui.tbwPrimaryMemory.setRowCount(0)
@@ -24,13 +31,6 @@ class MainWindow(QMainWindow):
         self.process_list = []
         self.machine_parameters = None
         self.processor = None
-        self.ui.btnCreateProccess.clicked.connect(self.handler_create_proces_service)
-        self.ui.btnSetParameters.clicked.connect(self.define_machine)
-        self.ui.btnGenerateRandom.clicked.connect(self.create_random_proc)
-        self.ui.btnLauch.clicked.connect(self.handle_launch)
-        self.ui.tbwProcess.itemSelectionChanged.connect(self.get_process_from_table)
-        self.ui.btnPause.clicked.connect(self.handle_pause_process)
-        self.ui.btnDone.clicked.connect(self.handle_resume_process)
         self.process_id = []
         self.schedul = Scheduler()
         self.selected_process = None

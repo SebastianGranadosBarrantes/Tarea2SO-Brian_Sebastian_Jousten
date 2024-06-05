@@ -99,7 +99,7 @@ class Memory:
 
         for process, amount in pages_process_count.items():
             page = self.get_first_page_process(process)
-            if amount == 1 and page.process_type == 'Service':
+            if amount == 1:
                 continue
 
             elif amount > 1:

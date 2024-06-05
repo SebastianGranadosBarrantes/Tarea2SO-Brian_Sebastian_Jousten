@@ -44,7 +44,8 @@ class Process(QThread):
             while self.service_running:
                 if self.first_iteration:
                     self.remaining_time_signal.emit(self.idProcess)
-                    self.calculate_velocity()
+
+                self.calculate_velocity()
                 print(f'Service {self.idProcess} ({self.processName}) in execution')
                 self.sleep(self.velocity)
             self.process_finished.emit(self.idProcess)
