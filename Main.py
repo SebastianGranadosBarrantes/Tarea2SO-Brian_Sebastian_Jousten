@@ -244,8 +244,10 @@ class MainWindow(QMainWindow):
 
     def handle_process_finished(self, process_id):
         process = self.find_process_per_id(process_id)
+        print(process)
         self.remove_process_from_tables(process)
-
+        if all(p.executionTime >= p.finishTime for p in self.process_list):
+            QMessageBox.about(self, 'Success', 'Execution Finished')
 
     def remove_process_from_tables(self, process):
         try:
