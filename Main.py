@@ -21,7 +21,7 @@ class MainWindow(QMainWindow):
             self.ui.tbwProcess.itemSelectionChanged.connect(self.get_process_from_table)
             self.ui.btnPause.clicked.connect(self.handle_pause_process)
             self.ui.btnDone.clicked.connect(self.handle_resume_process)
-
+            self.ui.tbwProcess.itemChanged.connect(self.handle_table_item_changed)
         else:
             self.ui.tbwPrimaryMemory.clearContents()
             self.ui.tbwPrimaryMemory.setRowCount(0)
@@ -29,6 +29,7 @@ class MainWindow(QMainWindow):
             self.ui.tbwSecondaryMemory.setRowCount(0)
             self.running = False
 
+        self.bandera = None
         self.algorithm = ''
         self.process_list = []
         self.machine_parameters = None
@@ -266,6 +267,7 @@ class MainWindow(QMainWindow):
         if all(p.executionTime >= p.finishTime for p in self.process_list):
             QMessageBox.about(self, 'Success', 'Execution Finished')
             self.__init__()
+            self.bandera = None
 
     def remove_process_from_tables(self, process):
         try:
@@ -334,7 +336,7 @@ class MainWindow(QMainWindow):
                     self.schedul.get_processes_fifo(self.process_list)
                 elif self.algorithm == 'PRIORITY':
                     self.schedul.sort_process_list_priority(self.process_list)
-
+                self.bandera = True
                 self.processor.start()
                 self.updateTblPrcs()
             except Exception as e:
@@ -363,6 +365,32 @@ class MainWindow(QMainWindow):
 
         self.init_prMemory_table()
         self.init_seMemory_table()
+    def handle_table_item_changed(self, item):
+        if self.bandera is None:
+            print('PPPPPPPAAAAAAAASSSSSSSSSSSSSSSSOOOOOOOOOOOOO')
+            row = item.row()
+            column = item.column()
+            process_id = int(self.ui.tbwProcess.item(row, 0).text())
+            process = self.find_process_per_id(process_id)
+            if process is not None:
+                if column == 2:
+                    process.processName = item.text()
+                elif column == 3:
+                    try:
+                        process.processSize = int(item.text())
+                    except ValueError:
+                        QMessageBox.critical(self, 'Error', 'Process size must be an integer')
+                elif column == 4:
+                    try:
+                        process.pageNumber = int(item.text())
+                    except ValueError:
+                        QMessageBox.critical(self, 'Error', 'Page number must be an integer')
+                elif column == 6:
+                    try:
+                        process.finishTime = int(item.text())
+                    except ValueError:
+                        if process.type != 'Service':
+                            QMessageBox.critical(self, 'Error', 'Time remaining number must be an integer')
 
     def get_random_priority(self):
         return random.randint(1, 20)
